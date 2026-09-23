@@ -9,11 +9,30 @@ Usage:
 import os
 import sys
 import argparse
+from contextlib import contextmanager
 
 # This file lives at <repo>/scripts/runners/, so the repo root is three levels up.
 sys.path.insert(
     0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 )
+
+
+@contextmanager
+def _own_argv(name):
+    """
+    Delegate to a sub-runner's main().
+
+    Each sub-runner parses sys.argv itself, so it would otherwise see the
+    selection flag that chose it (--monitoring) and reject it as unknown.
+    Hand it an argv containing only its own name, so it takes its no-argument
+    path.
+    """
+    saved = sys.argv
+    sys.argv = [name]
+    try:
+        yield
+    finally:
+        sys.argv = saved
 
 
 def run_monitoring():
@@ -22,7 +41,8 @@ def run_monitoring():
     print("MONITORING SYSTEM")
     print("=" * 60)
     from scripts.runners.run_monitoring import main as monitoring_main
-    monitoring_main()
+    with _own_argv("run_monitoring.py"):
+        monitoring_main()
 
 
 def run_rca():
@@ -31,7 +51,8 @@ def run_rca():
     print("ROOT CAUSE ANALYSIS")
     print("=" * 60)
     from scripts.runners.run_rca import main as rca_main
-    rca_main()
+    with _own_argv("run_rca.py"):
+        rca_main()
 
 
 def run_hitl():
@@ -40,7 +61,8 @@ def run_hitl():
     print("HUMAN-IN-THE-LOOP")
     print("=" * 60)
     from scripts.runners.run_hitl import main as hitl_main
-    hitl_main()
+    with _own_argv("run_hitl.py"):
+        hitl_main()
 
 
 def run_experimentation():
@@ -49,7 +71,8 @@ def run_experimentation():
     print("EXPERIMENTATION")
     print("=" * 60)
     from scripts.runners.run_experimentation import main as exp_main
-    exp_main()
+    with _own_argv("run_experimentation.py"):
+        exp_main()
 
 
 def main():
