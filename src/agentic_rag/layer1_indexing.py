@@ -62,7 +62,7 @@ class IndexingLayer:
         self.logger = get_prompt_logger()
         self.error_tracker = get_error_tracker()
         
-        print("\n🔧 [Layer 1: Indexing] Initializing...")
+        print("\n[Layer 1: Indexing] Initializing...")
         
         # Initialize embeddings
         try:
@@ -74,7 +74,7 @@ class IndexingLayer:
                 encode_kwargs={'normalize_embeddings': True}
             )
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ✅ Embeddings loaded ({elapsed:.0f}ms): {embedding_model}")
+            print(f"   Embeddings loaded ({elapsed:.0f}ms): {embedding_model}")
         except Exception as e:
             self.error_tracker.track_error("layer1_indexing", e, {"step": "embedding_init"})
             raise
@@ -87,7 +87,7 @@ class IndexingLayer:
                 collection_name="fintech-rag-demo"
             )
             count = self.vectorstore._collection.count()
-            print(f"   ✅ Vector store connected: {count} documents")
+            print(f"   Vector store connected: {count} documents")
         except Exception as e:
             self.error_tracker.track_error("layer1_indexing", e, {"step": "vectorstore_init"})
             raise
@@ -95,9 +95,9 @@ class IndexingLayer:
         # Graph database (optional)
         self.graph = graph
         if self.graph:
-            print(f"   ✅ Graph database connected")
+            print(f"   Graph database connected")
         else:
-            print(f"   ⚠️  Graph database not available")
+            print(f"   Graph database not available")
         
         # Semantic text splitter
         self.text_splitter = RecursiveCharacterTextSplitter(
@@ -107,7 +107,7 @@ class IndexingLayer:
             length_function=len,
         )
         
-        print("   ✅ Layer 1 initialized\n")
+        print("   Layer 1 initialized\n")
     
     def chunk_document(
         self,
@@ -126,7 +126,7 @@ class IndexingLayer:
         Returns:
             List of DocumentChunk objects
         """
-        print(f"\n📄 [Layer 1] Chunking document...")
+        print(f"\n[Layer 1] Chunking document...")
         print(f"   Source: {metadata.get('source', 'unknown')}")
         print(f"   Length: {len(document)} chars")
         print(f"   Hierarchy: {create_hierarchy}")
@@ -136,7 +136,7 @@ class IndexingLayer:
         try:
             # Split into semantic chunks
             raw_chunks = self.text_splitter.split_text(document)
-            print(f"   ✅ Created {len(raw_chunks)} semantic chunks")
+            print(f"   Created {len(raw_chunks)} semantic chunks")
             
             chunks: List[DocumentChunk] = []
             
@@ -160,10 +160,10 @@ class IndexingLayer:
                 summary_chunk = self._create_summary_chunk(document, metadata)
                 if summary_chunk:
                     chunks.insert(0, summary_chunk)
-                    print(f"   ✅ Created summary chunk")
+                    print(f"   Created summary chunk")
             
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ⏱️  Chunking completed ({elapsed:.0f}ms)")
+            print(f"   ⏱Chunking completed ({elapsed:.0f}ms)")
             
             # Log operation
             self.logger.log_prompt(
@@ -224,7 +224,7 @@ class IndexingLayer:
         Returns:
             Indexing statistics
         """
-        print(f"\n💾 [Layer 1] Indexing {len(chunks)} chunks...")
+        print(f"\n[Layer 1] Indexing {len(chunks)} chunks...")
         
         start_time = time.time()
         stats = {
@@ -245,16 +245,16 @@ class IndexingLayer:
             
             stats["chunks_indexed"] = len(chunks)
             stats["vectors_created"] = len(chunks)
-            print(f"   ✅ Indexed {len(chunks)} vectors")
+            print(f"   Indexed {len(chunks)} vectors")
             
             # Index in graph (if available)
             if self.graph:
                 graph_stats = self._index_in_graph(chunks)
                 stats["graph_nodes_created"] = graph_stats.get("nodes", 0)
-                print(f"   ✅ Created {stats['graph_nodes_created']} graph nodes")
+                print(f"   Created {stats['graph_nodes_created']} graph nodes")
             
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ⏱️  Indexing completed ({elapsed:.0f}ms)")
+            print(f"   ⏱Indexing completed ({elapsed:.0f}ms)")
             
             # Log operation
             self.logger.log_prompt(

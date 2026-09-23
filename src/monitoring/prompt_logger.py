@@ -100,7 +100,7 @@ class PromptLogger:
                     session_id=self.session_id,
                 )
             except Exception as e:
-                print(f"⚠️  Failed to log prompt to PostgreSQL: {e}")
+                print(f"Failed to log prompt to PostgreSQL: {e}")
 
         # Print to console for real-time monitoring
         if self.verbose:
@@ -110,7 +110,7 @@ class PromptLogger:
 
     def _print_log(self, log_entry: Dict[str, Any]):
         """Print log entry to console with formatting."""
-        status_emoji = "✅" if log_entry["status"] == "success" else "❌"
+        status_emoji = "" if log_entry["status"] == "success" else ""
         layer = log_entry["layer"]
 
         print(f"\n{'='*80}")
@@ -125,7 +125,7 @@ class PromptLogger:
             for key, value in log_entry["metadata"].items():
                 print(f"  {key}: {value}")
 
-        print(f"\n📝 PROMPT ({len(log_entry['prompt'])} chars):")
+        print(f"\nPROMPT ({len(log_entry['prompt'])} chars):")
         print("-" * 80)
         print(log_entry["prompt"][:500])
         if len(log_entry["prompt"]) > 500:
@@ -133,7 +133,7 @@ class PromptLogger:
         print("-" * 80)
 
         if log_entry.get("response"):
-            print(f"\n💬 RESPONSE ({len(log_entry['response'])} chars):")
+            print(f"\nRESPONSE ({len(log_entry['response'])} chars):")
             print("-" * 80)
             print(log_entry["response"][:300])
             if len(log_entry["response"]) > 300:
@@ -141,14 +141,14 @@ class PromptLogger:
             print("-" * 80)
 
         if log_entry.get("error"):
-            print(f"\n❌ ERROR:")
+            print(f"\nERROR:")
             print(log_entry["error"])
 
         if log_entry.get("latency_ms"):
-            print(f"\n⏱️  Latency: {log_entry['latency_ms']:.0f}ms")
+            print(f"\n⏱Latency: {log_entry['latency_ms']:.0f}ms")
 
         if log_entry.get("tokens_used"):
-            print(f"🔢 Tokens: {log_entry['tokens_used']}")
+            print(f"Tokens: {log_entry['tokens_used']}")
 
         print(f"{'='*80}\n")
 
@@ -184,7 +184,7 @@ class PromptLogger:
             db_logs = await postgres.get_prompt_logs(layer=layer, limit=limit)
             return db_logs
         except Exception as e:
-            print(f"⚠️  Failed to get logs from PostgreSQL: {e}")
+            print(f"Failed to get logs from PostgreSQL: {e}")
             return self.logs[-limit:]
 
     async def get_stats(self) -> Dict[str, Any]:
@@ -241,7 +241,7 @@ class PromptLogger:
 
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(self.logs, f, indent=2, ensure_ascii=False)
-        print(f"✅ Exported {len(self.logs)} logs to {output_file}")
+        print(f"Exported {len(self.logs)} logs to {output_file}")
 
 
 # Global singleton instance

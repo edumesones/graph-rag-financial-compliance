@@ -73,10 +73,10 @@ class RedisCache:
             # Test connection
             await self.client.ping()
             self.is_connected = True
-            print(f"✅ Redis connected: {self.host}:{self.port}/{self.db}")
+            print(f"Redis connected: {self.host}:{self.port}/{self.db}")
         except Exception as e:
             self.is_connected = False
-            print(f"❌ Redis connection failed: {e}")
+            print(f"Redis connection failed: {e}")
             raise
 
     async def disconnect(self) -> None:
@@ -84,7 +84,7 @@ class RedisCache:
         if self.client:
             await self.client.close()
             self.is_connected = False
-            print("✅ Redis disconnected")
+            print("Redis disconnected")
 
     async def get(self, key: str) -> Optional[Any]:
         """
@@ -97,7 +97,7 @@ class RedisCache:
             Cached value or None if not found/expired
         """
         if not self.client:
-            print("⚠️  Redis not connected, cache miss")
+            print("Redis not connected, cache miss")
             return None
 
         try:
@@ -112,7 +112,7 @@ class RedisCache:
                 return pickle.loads(value)
 
         except Exception as e:
-            print(f"⚠️  Redis get error for key '{key}': {e}")
+            print(f"Redis get error for key '{key}': {e}")
             return None
 
     async def set(
@@ -133,7 +133,7 @@ class RedisCache:
             True if successful, False otherwise
         """
         if not self.client:
-            print("⚠️  Redis not connected, skipping set")
+            print("Redis not connected, skipping set")
             return False
 
         try:
@@ -154,7 +154,7 @@ class RedisCache:
             return True
 
         except Exception as e:
-            print(f"⚠️  Redis set error for key '{key}': {e}")
+            print(f"Redis set error for key '{key}': {e}")
             return False
 
     async def delete(self, key: str) -> bool:
@@ -174,7 +174,7 @@ class RedisCache:
             await self.client.delete(key)
             return True
         except Exception as e:
-            print(f"⚠️  Redis delete error for key '{key}': {e}")
+            print(f"Redis delete error for key '{key}': {e}")
             return False
 
     async def exists(self, key: str) -> bool:
@@ -193,7 +193,7 @@ class RedisCache:
         try:
             return await self.client.exists(key) > 0
         except Exception as e:
-            print(f"⚠️  Redis exists error for key '{key}': {e}")
+            print(f"Redis exists error for key '{key}': {e}")
             return False
 
     async def get_ttl(self, key: str) -> Optional[int]:
@@ -213,7 +213,7 @@ class RedisCache:
             ttl = await self.client.ttl(key)
             return ttl if ttl > 0 else None
         except Exception as e:
-            print(f"⚠️  Redis get_ttl error for key '{key}': {e}")
+            print(f"Redis get_ttl error for key '{key}': {e}")
             return None
 
     async def get_stats(self) -> Dict[str, Any]:
@@ -249,14 +249,14 @@ class RedisCache:
                 "expired_keys": info.get("expired_keys", 0),
             }
         except Exception as e:
-            print(f"⚠️  Failed to get cache stats: {e}")
+            print(f"Failed to get cache stats: {e}")
             return {"status": "error", "error": str(e)}
 
     async def clear_all(self) -> bool:
         """
         Clear all keys from current database
 
-        ⚠️ WARNING: Use with caution! This deletes all keys.
+        WARNING: Use with caution! This deletes all keys.
 
         Returns:
             True if successful, False otherwise
@@ -266,10 +266,10 @@ class RedisCache:
 
         try:
             await self.client.flushdb()
-            print("⚠️  Redis: All keys cleared from current database")
+            print("Redis: All keys cleared from current database")
             return True
         except Exception as e:
-            print(f"⚠️  Redis flushdb error: {e}")
+            print(f"Redis flushdb error: {e}")
             return False
 
     async def health_check(self) -> bool:
@@ -304,7 +304,7 @@ class RedisCache:
         try:
             return await self.client.memory_usage(key)
         except Exception as e:
-            print(f"⚠️  Redis memory_usage error for key '{key}': {e}")
+            print(f"Redis memory_usage error for key '{key}': {e}")
             return None
 
     async def increment(self, key: str, amount: int = 1) -> Optional[int]:
@@ -324,7 +324,7 @@ class RedisCache:
         try:
             return await self.client.incrby(key, amount)
         except Exception as e:
-            print(f"⚠️  Redis increment error for key '{key}': {e}")
+            print(f"Redis increment error for key '{key}': {e}")
             return None
 
     async def get_keys_by_pattern(self, pattern: str) -> list:
@@ -346,7 +346,7 @@ class RedisCache:
                 keys.append(key.decode("utf-8") if isinstance(key, bytes) else key)
             return keys
         except Exception as e:
-            print(f"⚠️  Redis scan error for pattern '{pattern}': {e}")
+            print(f"Redis scan error for pattern '{pattern}': {e}")
             return []
 
 

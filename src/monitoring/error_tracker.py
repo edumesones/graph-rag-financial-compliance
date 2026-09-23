@@ -97,7 +97,7 @@ class ErrorTracker:
                     traceback_str=traceback_str,
                 )
             except Exception as e:
-                print(f"⚠️  Failed to log error to PostgreSQL: {e}")
+                print(f"Failed to log error to PostgreSQL: {e}")
 
         # Print to console for real-time monitoring
         if self.verbose:
@@ -108,10 +108,10 @@ class ErrorTracker:
     def _print_error(self, error_entry: Dict[str, Any]):
         """Print error to console with formatting."""
         severity_emoji = {
-            "warning": "⚠️",
-            "error": "❌",
-            "critical": "🚨",
-        }.get(error_entry["severity"], "❌")
+            "warning": "",
+            "error": "",
+            "critical": "",
+        }.get(error_entry["severity"], "")
 
         print(f"\n{'='*80}")
         print(f"{severity_emoji} ERROR TRACKED - {error_entry['layer'].upper()}")
@@ -128,12 +128,12 @@ class ErrorTracker:
                 value_str = str(value)[:100]
                 print(f"  {key}: {value_str}")
 
-        print(f"\n💥 ERROR MESSAGE:")
+        print(f"\nERROR MESSAGE:")
         print("-" * 80)
         print(error_entry["error_message"])
         print("-" * 80)
 
-        print(f"\n📋 TRACEBACK:")
+        print(f"\nTRACEBACK:")
         print(error_entry["traceback"][:500])
         if len(error_entry["traceback"]) > 500:
             print("... [see PostgreSQL for full traceback]")
@@ -184,7 +184,7 @@ class ErrorTracker:
             )
             return db_errors
         except Exception as e:
-            print(f"⚠️  Failed to get errors from PostgreSQL: {e}")
+            print(f"Failed to get errors from PostgreSQL: {e}")
             return self.errors[-limit:]
 
     async def get_stats(self) -> Dict[str, Any]:
@@ -246,7 +246,7 @@ class ErrorTracker:
 
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(self.errors, f, indent=2, ensure_ascii=False)
-        print(f"✅ Exported {len(self.errors)} errors to {output_file}")
+        print(f"Exported {len(self.errors)} errors to {output_file}")
 
 
 # Global singleton

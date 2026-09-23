@@ -40,17 +40,17 @@ def print_header(text: str):
 
 def print_success(text: str):
     """Print success message"""
-    print(f"{Colors.GREEN}✅ {text}{Colors.ENDC}")
+    print(f"{Colors.GREEN}{text}{Colors.ENDC}")
 
 
 def print_error(text: str):
     """Print error message"""
-    print(f"{Colors.RED}❌ {text}{Colors.ENDC}")
+    print(f"{Colors.RED}{text}{Colors.ENDC}")
 
 
 def print_warning(text: str):
     """Print warning message"""
-    print(f"{Colors.YELLOW}⚠️  {text}{Colors.ENDC}")
+    print(f"{Colors.YELLOW}{text}{Colors.ENDC}")
 
 
 def print_info(text: str):
@@ -92,10 +92,10 @@ class ValidationResult:
         print(f"Time Elapsed: {elapsed:.2f}s")
 
         if failed == 0:
-            print(f"\n{Colors.GREEN}{Colors.BOLD}🎉 ALL CHECKS PASSED - READY FOR DEPLOYMENT!{Colors.ENDC}")
+            print(f"\n{Colors.GREEN}{Colors.BOLD}ALL CHECKS PASSED - READY FOR DEPLOYMENT!{Colors.ENDC}")
             return True
         else:
-            print(f"\n{Colors.RED}{Colors.BOLD}❌ DEPLOYMENT NOT READY - FIX ERRORS ABOVE{Colors.ENDC}")
+            print(f"\n{Colors.RED}{Colors.BOLD}DEPLOYMENT NOT READY - FIX ERRORS ABOVE{Colors.ENDC}")
             return False
 
 
@@ -514,7 +514,7 @@ def check_data_directories(result: ValidationResult):
 
 async def run_validation(detailed: bool = False):
     """Run all validation checks"""
-    print_header("🔍 Deployment Validation - Fintech Agentic RAG")
+    print_header("Deployment Validation - Fintech Agentic RAG")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
     result = ValidationResult()

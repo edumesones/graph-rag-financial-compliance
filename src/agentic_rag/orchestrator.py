@@ -53,7 +53,7 @@ class AgenticRAGOrchestrator:
         self.error_tracker = get_error_tracker()
         
         print("\n" + "="*80)
-        print("🚀 INITIALIZING AGENTIC RAG SYSTEM")
+        print("INITIALIZING AGENTIC RAG SYSTEM")
         print("="*80)
         
         # Initialize layers
@@ -72,7 +72,7 @@ class AgenticRAGOrchestrator:
         )
         self.layer5 = GenerationLayer(llm=llm)
         
-        print("\n✅ ALL LAYERS INITIALIZED")
+        print("\nALL LAYERS INITIALIZED")
         print("="*80 + "\n")
     
     def query(
@@ -96,11 +96,11 @@ class AgenticRAGOrchestrator:
         """
         if verbose:
             print("\n" + "="*80)
-            print("🔄 AGENTIC RAG PIPELINE EXECUTION")
+            print("AGENTIC RAG PIPELINE EXECUTION")
             print("="*80)
-            print(f"📝 Query: {query}")
+            print(f"Query: {query}")
             if context:
-                print(f"📋 Context: {json.dumps(context)}")
+                print(f"Context: {json.dumps(context)}")
             print("="*80)
         
         start_time = time.time()
@@ -241,21 +241,21 @@ class AgenticRAGOrchestrator:
     def _print_summary(self, response: Dict[str, Any]):
         """Print execution summary."""
         print("\n" + "="*80)
-        print("✅ PIPELINE COMPLETED")
+        print("PIPELINE COMPLETED")
         print("="*80)
         
-        print(f"\n📊 SUMMARY:")
+        print(f"\nSUMMARY:")
         print(f"   Total Time: {response['total_time_ms']:.0f}ms")
         print(f"   Confidence: {response['confidence']:.2f}")
         print(f"   Citations: {len(response['citations'])}")
         print(f"   Documents: {response['metadata']['documents_retrieved']}")
         
-        print(f"\n⏱️  LAYER TIMINGS:")
+        print(f"\n⏱LAYER TIMINGS:")
         for step in response['pipeline_trace']:
             layer_name = step['layer'].replace('_', ' ').title()
             print(f"   {layer_name}: {step['duration_ms']:.0f}ms")
         
-        print(f"\n💬 ANSWER ({len(response['answer'])} chars):")
+        print(f"\nANSWER ({len(response['answer'])} chars):")
         print("-" * 80)
         print(response['answer'][:300])
         if len(response['answer']) > 300:
@@ -263,7 +263,7 @@ class AgenticRAGOrchestrator:
         print("-" * 80)
         
         if response['citations']:
-            print(f"\n📚 CITATIONS:")
+            print(f"\nCITATIONS:")
             for citation in response['citations'][:3]:
                 print(f"   - Source {citation['source_id']}: {citation['source']}")
         
@@ -290,23 +290,23 @@ class AgenticRAGOrchestrator:
         prompt_logger = get_prompt_logger()
         error_tracker = get_error_tracker()
         
-        print(f"\n📤 Exporting session logs to {output_dir}...")
+        print(f"\nExporting session logs to {output_dir}...")
         
         # Export prompt logs
         prompt_file = f"{output_dir}/prompt_logs.json"
         prompt_logger.export_logs(prompt_file)
-        print(f"   ✅ Prompt logs: {prompt_file}")
+        print(f"   Prompt logs: {prompt_file}")
         
         # Export error logs (errors are auto-persisted)
         error_stats = error_tracker.get_stats()
-        print(f"   ✅ Error logs: {error_stats.get('session_file', 'N/A')}")
+        print(f"   Error logs: {error_stats.get('session_file', 'N/A')}")
         
         # Export system stats
         stats_file = f"{output_dir}/system_stats.json"
         import json
         with open(stats_file, 'w') as f:
             json.dump(self.get_system_stats(), f, indent=2)
-        print(f"   ✅ System stats: {stats_file}")
+        print(f"   System stats: {stats_file}")
         
-        print(f"✅ Export completed\n")
+        print(f"Export completed\n")
 

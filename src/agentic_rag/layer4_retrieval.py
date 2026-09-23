@@ -76,25 +76,25 @@ class RetrievalLayer:
         self.reranker = reranker
         self.use_cache = use_cache
 
-        print("\n🔧 [Layer 4: Retrieval] Initializing...")
-        print(f"   ✅ Vector store available")
+        print("\n[Layer 4: Retrieval] Initializing...")
+        print(f"   Vector store available")
 
         if self.graph:
-            print(f"   ✅ Graph database available")
+            print(f"   Graph database available")
         else:
-            print(f"   ⚠️  Graph database not available")
+            print(f"   Graph database not available")
 
         if self.reranker:
-            print(f"   ✅ Re-ranker model available")
+            print(f"   Re-ranker model available")
         else:
-            print(f"   ⚠️  Re-ranker not available (using score-based ranking)")
+            print(f"   Re-ranker not available (using score-based ranking)")
 
         if self.redis_cache:
-            print(f"   ✅ Redis cache available")
+            print(f"   Redis cache available")
         else:
-            print(f"   ⚠️  Redis cache not available")
+            print(f"   Redis cache not available")
 
-        print("   ✅ Layer 4 initialized\n")
+        print("   Layer 4 initialized\n")
     
     async def retrieve(
         self,
@@ -115,7 +115,7 @@ class RetrievalLayer:
         Returns:
             RetrievalResponse with results
         """
-        print(f"\n🔍 [Layer 4] Retrieving documents...")
+        print(f"\n[Layer 4] Retrieving documents...")
         print(f"   Sub-queries: {len(query_plan.sub_queries)}")
         print(f"   Fusion: {apply_fusion}")
         print(f"   Re-ranking: {apply_reranking}")
@@ -128,7 +128,7 @@ class RetrievalLayer:
             try:
                 cached = await self.redis_cache.get(cache_key)
                 if cached:
-                    print(f"   ✅ Cache HIT! Returning cached results")
+                    print(f"   Cache HIT! Returning cached results")
                     # Reconstruct RetrievalResponse from cached dict
                     cached_results = [
                         RetrievalResult(**r) for r in cached.get("results", [])
@@ -142,7 +142,7 @@ class RetrievalLayer:
                         metadata={**cached["metadata"], "from_cache": True},
                     )
             except Exception as e:
-                print(f"   ⚠️  Cache read error: {e}")
+                print(f"   Cache read error: {e}")
 
         print(f"   Cache MISS - executing retrieval")
         start_time = time.time()
@@ -152,7 +152,7 @@ class RetrievalLayer:
             
             # Execute each sub-query
             for i, sub_query in enumerate(query_plan.sub_queries):
-                print(f"\n   📝 Sub-query {i+1}/{len(query_plan.sub_queries)}: {sub_query[:60]}...")
+                print(f"\n   Sub-query {i+1}/{len(query_plan.sub_queries)}: {sub_query[:60]}...")
                 
                 # Vector search
                 vector_results = self._vector_search(sub_query, k=k*2)
@@ -168,12 +168,12 @@ class RetrievalLayer:
                     print(f"      Graph: {len(graph_results)} results")
                     all_results.extend(graph_results)
             
-            print(f"\n   ✅ Retrieved {len(all_results)} total results")
+            print(f"\n   Retrieved {len(all_results)} total results")
             
             # Fusion: combine and deduplicate
             if apply_fusion and len(all_results) > k:
                 fused_results = self._fuse_results(all_results, k)
-                print(f"   ✅ Fused to {len(fused_results)} results")
+                print(f"   Fused to {len(fused_results)} results")
             else:
                 fused_results = all_results[:k]
             
@@ -183,7 +183,7 @@ class RetrievalLayer:
                     query_plan.original_query,
                     fused_results
                 )
-                print(f"   ✅ Re-ranked results")
+                print(f"   Re-ranked results")
             else:
                 reranked_results = fused_results
             
@@ -192,7 +192,7 @@ class RetrievalLayer:
                 result.rank = i + 1
             
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ⏱️  Retrieval completed ({elapsed:.0f}ms)")
+            print(f"   ⏱Retrieval completed ({elapsed:.0f}ms)")
 
             response = RetrievalResponse(
                 results=reranked_results,
@@ -220,9 +220,9 @@ class RetrievalLayer:
                     }
                     # Cache for 1 hour (3600 seconds)
                     await self.redis_cache.set(cache_key, cache_data, ttl=3600)
-                    print(f"   ✅ Results cached")
+                    print(f"   Results cached")
                 except Exception as e:
-                    print(f"   ⚠️  Cache write error: {e}")
+                    print(f"   Cache write error: {e}")
 
             # Log retrieval
             await self.logger.log_prompt(
@@ -279,7 +279,7 @@ class RetrievalLayer:
             return results
             
         except Exception as e:
-            print(f"      ❌ Vector search error: {e}")
+            print(f"      Vector search error: {e}")
             return []
     
     def _graph_search(
@@ -312,7 +312,7 @@ class RetrievalLayer:
             return results
             
         except Exception as e:
-            print(f"      ❌ Graph search error: {e}")
+            print(f"      Graph search error: {e}")
             return []
     
     def _fuse_results(
@@ -387,7 +387,7 @@ class RetrievalLayer:
             return results
             
         except Exception as e:
-            print(f"   ⚠️  Re-ranking failed: {e}")
+            print(f"   Re-ranking failed: {e}")
             return results
     
     def _generate_cache_key(

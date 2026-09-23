@@ -38,9 +38,9 @@ class GenerationLayer:
         self.error_tracker = get_error_tracker()
         self.llm = llm
         
-        print("\n🔧 [Layer 5: Generation] Initializing...")
-        print(f"   ✅ LLM configured for generation")
-        print("   ✅ Layer 5 initialized\n")
+        print("\n[Layer 5: Generation] Initializing...")
+        print(f"   LLM configured for generation")
+        print("   Layer 5 initialized\n")
     
     def generate_response(
         self,
@@ -59,7 +59,7 @@ class GenerationLayer:
         Returns:
             Dictionary with answer, citations, metadata
         """
-        print(f"\n✍️  [Layer 5] Generating response...")
+        print(f"\n[Layer 5] Generating response...")
         print(f"   Query: {query[:80]}...")
         print(f"   Retrieved docs: {len(retrieval_response.results)}")
         
@@ -77,14 +77,14 @@ class GenerationLayer:
                 context
             )
             
-            print(f"   📝 Prompt built ({len(prompt)} chars)")
+            print(f"   Prompt built ({len(prompt)} chars)")
             
             # Generate with LLM
-            print(f"   🤖 Invoking LLM...")
+            print(f"   Invoking LLM...")
             response = self.llm.invoke(prompt)
             answer = response.content if hasattr(response, 'content') else str(response)
             
-            print(f"   ✅ Response generated ({len(answer)} chars)")
+            print(f"   Response generated ({len(answer)} chars)")
             
             # Extract citations
             citations = self._extract_citations(answer, retrieval_response.results)
@@ -97,9 +97,9 @@ class GenerationLayer:
             )
             
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ⏱️  Generation completed ({elapsed:.0f}ms)")
-            print(f"   📊 Confidence: {confidence:.2f}")
-            print(f"   📚 Citations: {len(citations)}")
+            print(f"   ⏱Generation completed ({elapsed:.0f}ms)")
+            print(f"   Confidence: {confidence:.2f}")
+            print(f"   Citations: {len(citations)}")
             
             result = {
                 "answer": answer,

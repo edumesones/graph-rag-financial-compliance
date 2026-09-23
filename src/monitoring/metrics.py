@@ -542,7 +542,7 @@ def init_metrics(app_name: str = "Fintech Agentic RAG", version: str = "2.0.0"):
             "deployment": "Docker Compose",
         }
     )
-    print(f"✅ Prometheus metrics initialized: {app_name} v{version}")
+    print(f"Prometheus metrics initialized: {app_name} v{version}")
 
 
 # ================================

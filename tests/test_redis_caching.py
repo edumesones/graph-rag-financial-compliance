@@ -14,7 +14,7 @@ async def test_redis_connection(redis_cache):
     # Try a simple ping operation
     try:
         await redis_cache.redis.ping()
-        print("✅ Redis connection successful")
+        print("Redis connection successful")
     except Exception as e:
         pytest.fail(f"Redis connection failed: {e}")
 
@@ -33,7 +33,7 @@ async def test_basic_set_get(redis_cache):
 
     assert retrieved is not None
     assert retrieved["message"] == value["message"]
-    print(f"✅ Set and retrieved value: {retrieved}")
+    print(f"Set and retrieved value: {retrieved}")
 
 
 @pytest.mark.asyncio
@@ -48,7 +48,7 @@ async def test_set_with_ttl(redis_cache):
     # Should exist immediately
     retrieved = await redis_cache.get(key)
     assert retrieved is not None
-    print("✅ Value exists immediately after set")
+    print("Value exists immediately after set")
 
     # Wait 3 seconds for expiration
     await asyncio.sleep(3)
@@ -56,7 +56,7 @@ async def test_set_with_ttl(redis_cache):
     # Should be expired now
     retrieved_after = await redis_cache.get(key)
     assert retrieved_after is None
-    print("✅ Value expired after TTL")
+    print("Value expired after TTL")
 
 
 @pytest.mark.asyncio
@@ -76,7 +76,7 @@ async def test_delete_key(redis_cache):
 
     # Verify it's gone
     assert await redis_cache.get(key) is None
-    print("✅ Successfully deleted key")
+    print("Successfully deleted key")
 
 
 @pytest.mark.asyncio
@@ -95,7 +95,7 @@ async def test_exists_check(redis_cache):
     exists_after = await redis_cache.exists(key)
     assert exists_after is True
 
-    print("✅ Exists check working correctly")
+    print("Exists check working correctly")
 
 
 @pytest.mark.asyncio
@@ -105,7 +105,7 @@ async def test_cache_hit_miss_stats(redis_cache):
     stats = await redis_cache.get_stats()
 
     assert isinstance(stats, dict)
-    print(f"✅ Cache stats: {stats}")
+    print(f"Cache stats: {stats}")
 
     # Note: Stats tracking depends on implementation
     # This is a basic structure test
@@ -149,7 +149,7 @@ async def test_complex_data_types(redis_cache):
         retrieved = await redis_cache.get(key)
 
         assert retrieved == value, f"Mismatch for {key}: {retrieved} != {value}"
-        print(f"✅ Cached and retrieved {key} correctly")
+        print(f"Cached and retrieved {key} correctly")
 
 
 @pytest.mark.asyncio
@@ -185,7 +185,7 @@ async def test_routing_cache_pattern(redis_cache):
     assert cached_decision is not None
     assert cached_decision["query_type"] == "semantic"
     assert cached_decision["confidence"] == 0.85
-    print(f"✅ Routing cache pattern working: {cache_key[:20]}...")
+    print(f"Routing cache pattern working: {cache_key[:20]}...")
 
 
 @pytest.mark.asyncio
@@ -218,7 +218,7 @@ async def test_retrieval_cache_pattern(redis_cache):
     assert cached_result is not None
     assert len(cached_result["documents"]) == 2
     assert cached_result["metadata"]["total_retrieved"] == 2
-    print(f"✅ Retrieval cache pattern working")
+    print(f"Retrieval cache pattern working")
 
 
 @pytest.mark.asyncio
@@ -248,7 +248,7 @@ async def test_concurrent_cache_operations(redis_cache):
     errors = [r for r in results if isinstance(r, Exception)]
     assert len(errors) == 0, f"Got {len(errors)} errors in concurrent operations"
 
-    print(f"✅ Completed {len(tasks)} concurrent operations successfully")
+    print(f"Completed {len(tasks)} concurrent operations successfully")
 
 
 @pytest.mark.asyncio
@@ -272,7 +272,7 @@ async def test_cache_performance(redis_cache):
     assert set_time < 2.0, f"SET ops too slow: {set_time:.2f}s for {num_operations} ops"
     assert get_time < 2.0, f"GET ops too slow: {get_time:.2f}s for {num_operations} ops"
 
-    print(f"✅ Performance: {num_operations} SETs in {set_time:.3f}s, GETs in {get_time:.3f}s")
+    print(f"Performance: {num_operations} SETs in {set_time:.3f}s, GETs in {get_time:.3f}s")
     print(f"   SET: {num_operations/set_time:.0f} ops/sec, GET: {num_operations/get_time:.0f} ops/sec")
 
 
@@ -301,7 +301,7 @@ async def test_cache_namespace_isolation(redis_cache):
     assert cached_retrieval["type"] == "retrieval"
     assert cached_routing != cached_retrieval
 
-    print("✅ Cache namespace isolation working")
+    print("Cache namespace isolation working")
 
 
 @pytest.mark.asyncio
@@ -337,7 +337,7 @@ async def test_cache_hit_rate_simulation(redis_cache):
 
     hit_rate = hits / len(queries)
 
-    print(f"✅ Cache hit rate: {hit_rate:.1%} ({hits}/{len(queries)} hits)")
+    print(f"Cache hit rate: {hit_rate:.1%} ({hits}/{len(queries)} hits)")
 
     # With 6 queries and 3 unique, we expect:
     # - 3 misses (first occurrence of each)
@@ -370,7 +370,7 @@ async def test_large_value_caching(redis_cache):
     assert len(retrieved["documents"]) == 10
     assert len(retrieved["documents"][0]["content"]) == 10000
 
-    print("✅ Successfully cached and retrieved large value")
+    print("Successfully cached and retrieved large value")
 
 
 @pytest.mark.asyncio
@@ -389,4 +389,4 @@ async def test_reconnect_resilience(redis_cache):
     retrieved = await redis_cache.get("reconnect_test")
     assert retrieved is not None
 
-    print("✅ Successfully reconnected to Redis")
+    print("Successfully reconnected to Redis")

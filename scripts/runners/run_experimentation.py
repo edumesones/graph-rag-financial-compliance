@@ -27,10 +27,10 @@ def main():
     
     args = parser.parse_args()
     
-    print("🧪 Initializing experimentation system...")
+    print("Initializing experimentation system...")
     
     if args.ab_test:
-        print("\n📊 Creating A/B test...")
+        print("\nCreating A/B test...")
         manager = ABTestingManager()
         
         test = manager.create_test(
@@ -42,12 +42,12 @@ def main():
             success_metric="accuracy",
         )
         
-        print(f"✅ A/B Test created: {test.test_id}")
+        print(f"A/B Test created: {test.test_id}")
         print(f"   Variants: {len(test.variants)}")
         print(f"   Status: {test.status.value}")
     
     if args.shadow:
-        print("\n👥 Creating shadow deployment...")
+        print("\nCreating shadow deployment...")
         manager = ShadowDeploymentManager()
         
         deployment = manager.create_shadow_deployment(
@@ -56,16 +56,16 @@ def main():
             shadow_endpoint="https://shadow.modal.run",
         )
         
-        print(f"✅ Shadow deployment created: {deployment.deployment_id}")
+        print(f"Shadow deployment created: {deployment.deployment_id}")
         print(f"   Status: {deployment.status.value}")
     
     if args.list:
-        print("\n📋 Active Experiments:")
+        print("\nActive Experiments:")
         # This would list from storage - simplified for demo
         print("   (No active experiments - create one with --ab-test or --shadow)")
     
     if not any([args.ab_test, args.shadow, args.list]):
-        print("\n💡 Usage examples:")
+        print("\nUsage examples:")
         print("   python src/run_experimentation.py --ab-test")
         print("   python src/run_experimentation.py --shadow")
         print("   python src/run_experimentation.py --list")

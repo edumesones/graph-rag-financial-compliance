@@ -34,7 +34,7 @@ class SECTextExtractor:
             Extracted text or None if extraction fails
         """
         if not os.path.exists(filing_dir):
-            print(f"   ❌ Directory not found: {filing_dir}")
+            print(f"   Directory not found: {filing_dir}")
             return None
 
         # Priority order for file types
@@ -50,12 +50,12 @@ class SECTextExtractor:
             if files:
                 # Use first matching file
                 file_path = files[0]
-                print(f"   📄 Extracting from: {os.path.basename(file_path)}")
+                print(f"   Extracting from: {os.path.basename(file_path)}")
                 text = extractor(file_path)
                 if text and len(text.strip()) > 100:
                     return text
 
-        print(f"   ⚠️  No readable files found in {filing_dir}")
+        print(f"   No readable files found in {filing_dir}")
         return None
 
     def _extract_txt(self, file_path: str) -> Optional[str]:
@@ -64,7 +64,7 @@ class SECTextExtractor:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 return f.read()
         except Exception as e:
-            print(f"   ❌ Error reading TXT: {e}")
+            print(f"   Error reading TXT: {e}")
             return None
 
     def _extract_html(self, file_path: str) -> Optional[str]:
@@ -94,5 +94,5 @@ class SECTextExtractor:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     return f.read()
         except Exception as e:
-            print(f"   ❌ Error reading HTML: {e}")
+            print(f"   Error reading HTML: {e}")
             return None

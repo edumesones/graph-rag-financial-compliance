@@ -26,7 +26,7 @@ async def test_log_prompt_basic(postgres_manager):
 
     assert log_id is not None
     assert isinstance(log_id, int)
-    print(f"✅ Logged prompt with ID: {log_id}")
+    print(f"Logged prompt with ID: {log_id}")
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ async def test_log_prompt_with_complex_metadata(postgres_manager):
     )
 
     assert log_id is not None
-    print(f"✅ Logged complex metadata with ID: {log_id}")
+    print(f"Logged complex metadata with ID: {log_id}")
 
 
 @pytest.mark.asyncio
@@ -70,7 +70,7 @@ async def test_log_error_basic(postgres_manager):
 
     assert error_id is not None
     assert isinstance(error_id, int)
-    print(f"✅ Logged error with ID: {error_id}")
+    print(f"Logged error with ID: {error_id}")
 
 
 @pytest.mark.asyncio
@@ -89,7 +89,7 @@ async def test_log_error_severity_levels(postgres_manager):
         )
 
         assert error_id is not None
-        print(f"✅ Logged {severity} error with ID: {error_id}")
+        print(f"Logged {severity} error with ID: {error_id}")
 
 
 @pytest.mark.asyncio
@@ -112,7 +112,7 @@ async def test_log_query_metrics(postgres_manager):
         )
 
         assert metric_id is not None
-        print(f"✅ Logged query metrics with ID: {metric_id}")
+        print(f"Logged query metrics with ID: {metric_id}")
 
     except AttributeError as e:
         pytest.skip(f"log_query_metrics not implemented: {e}")
@@ -141,7 +141,7 @@ async def test_get_prompt_logs(postgres_manager):
     if logs:
         log = logs[0]
         assert "layer" in log or "prompt" in log  # Basic structure check
-        print(f"✅ Retrieved {len(logs)} prompt logs")
+        print(f"Retrieved {len(logs)} prompt logs")
 
 
 @pytest.mark.asyncio
@@ -163,7 +163,7 @@ async def test_get_error_logs(postgres_manager):
 
         assert isinstance(errors, list)
         assert len(errors) > 0
-        print(f"✅ Retrieved {len(errors)} error logs")
+        print(f"Retrieved {len(errors)} error logs")
 
     except AttributeError as e:
         pytest.skip(f"get_error_logs not implemented: {e}")
@@ -192,7 +192,7 @@ async def test_concurrent_logging(postgres_manager):
     # Verify all succeeded
     successful = [r for r in results if isinstance(r, int)]
     assert len(successful) == 10, f"Expected 10 successful logs, got {len(successful)}"
-    print(f"✅ Successfully logged {len(successful)} concurrent entries")
+    print(f"Successfully logged {len(successful)} concurrent entries")
 
 
 @pytest.mark.asyncio
@@ -221,7 +221,7 @@ async def test_logging_performance(postgres_manager):
 
     # Should complete 50 logs in under 5 seconds (async advantage)
     assert elapsed < 5.0, f"Logging 50 entries took {elapsed:.2f}s, expected <5s"
-    print(f"✅ Logged 50 entries in {elapsed:.2f}s ({50/elapsed:.1f} logs/sec)")
+    print(f"Logged 50 entries in {elapsed:.2f}s ({50/elapsed:.1f} logs/sec)")
 
 
 @pytest.mark.asyncio
@@ -250,9 +250,9 @@ async def test_session_tracking(postgres_manager):
     # Note: This assumes session_id is returned in get_prompt_logs
     if session_logs:
         assert len(session_logs) >= 5
-        print(f"✅ Found {len(session_logs)} logs for session {session_id}")
+        print(f"Found {len(session_logs)} logs for session {session_id}")
     else:
-        print("⚠️  Session ID tracking not verified (not returned in get_prompt_logs)")
+        print("Session ID tracking not verified (not returned in get_prompt_logs)")
 
 
 @pytest.mark.asyncio
@@ -278,7 +278,7 @@ async def test_metadata_jsonb_storage(postgres_manager):
     )
 
     assert log_id is not None
-    print(f"✅ Stored complex JSONB metadata with ID: {log_id}")
+    print(f"Stored complex JSONB metadata with ID: {log_id}")
 
 
 @pytest.mark.asyncio
@@ -306,4 +306,4 @@ async def test_disconnect_and_reconnect(postgres_manager):
     )
 
     assert log_id is not None
-    print("✅ Successfully reconnected and logged")
+    print("Successfully reconnected and logged")

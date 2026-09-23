@@ -49,14 +49,14 @@ class QueryBuilderLayer:
         self.error_tracker = get_error_tracker()
         self.llm = llm
         
-        print("\n🔧 [Layer 3: Query Builder] Initializing...")
+        print("\n[Layer 3: Query Builder] Initializing...")
         
         if self.llm:
-            print(f"   ✅ LLM-based query building enabled")
+            print(f"   LLM-based query building enabled")
         else:
-            print(f"   ⚠️  Using rule-based query building")
+            print(f"   Using rule-based query building")
         
-        print("   ✅ Layer 3 initialized\n")
+        print("   Layer 3 initialized\n")
     
     def build_query_plan(
         self,
@@ -75,7 +75,7 @@ class QueryBuilderLayer:
         Returns:
             QueryPlan with sub-queries and translations
         """
-        print(f"\n🔨 [Layer 3] Building query plan...")
+        print(f"\n[Layer 3] Building query plan...")
         print(f"   Query: {query[:100]}...")
         print(f"   Type: {query_type.value}")
         
@@ -84,15 +84,15 @@ class QueryBuilderLayer:
         try:
             # Step 1: Decompose into sub-queries (if complex)
             sub_queries = self._decompose_query(query, context)
-            print(f"   ✅ Decomposed into {len(sub_queries)} sub-queries")
+            print(f"   Decomposed into {len(sub_queries)} sub-queries")
             
             # Step 2: Expand with related terms
             expanded_terms = self._expand_terms(query)
-            print(f"   ✅ Expanded with {len(expanded_terms)} related terms")
+            print(f"   Expanded with {len(expanded_terms)} related terms")
             
             # Step 3: Translate to specific query languages
             translated = self._translate_queries(sub_queries, query_type, context)
-            print(f"   ✅ Translated to {len(translated)} query formats")
+            print(f"   Translated to {len(translated)} query formats")
             
             # Step 4: Determine execution order
             execution_order = list(range(len(sub_queries)))
@@ -110,7 +110,7 @@ class QueryBuilderLayer:
             )
             
             elapsed = (time.time() - start_time) * 1000
-            print(f"   ⏱️  Query planning completed ({elapsed:.0f}ms)")
+            print(f"   ⏱Query planning completed ({elapsed:.0f}ms)")
             
             # Log plan
             self.logger.log_prompt(
@@ -197,7 +197,7 @@ If the query is simple enough, return:
             return sub_queries if sub_queries else [query]
             
         except Exception as e:
-            print(f"   ⚠️  LLM decomposition failed: {e}")
+            print(f"   LLM decomposition failed: {e}")
             return [query]
     
     def _decompose_with_rules(self, query: str) -> List[str]:

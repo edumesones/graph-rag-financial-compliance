@@ -71,10 +71,10 @@ class PostgresManager:
                 command_timeout=60,
             )
             self.is_connected = True
-            print(f"✅ PostgreSQL connected: {self.user}@{self.host}:{self.port}/{self.database}")
+            print(f"PostgreSQL connected: {self.user}@{self.host}:{self.port}/{self.database}")
         except Exception as e:
             self.is_connected = False
-            print(f"❌ PostgreSQL connection failed: {e}")
+            print(f"PostgreSQL connection failed: {e}")
             raise
 
     async def disconnect(self) -> None:
@@ -82,7 +82,7 @@ class PostgresManager:
         if self.pool:
             await self.pool.close()
             self.is_connected = False
-            print("✅ PostgreSQL disconnected")
+            print("PostgreSQL disconnected")
 
     async def log_prompt(
         self,
@@ -107,7 +107,7 @@ class PostgresManager:
             session_id: Session identifier
         """
         if not self.pool:
-            print("⚠️  PostgreSQL not connected, skipping log_prompt")
+            print("PostgreSQL not connected, skipping log_prompt")
             return
 
         query = """
@@ -127,7 +127,7 @@ class PostgresManager:
                     session_id,
                 )
         except Exception as e:
-            print(f"⚠️  Failed to log prompt: {e}")
+            print(f"Failed to log prompt: {e}")
 
     async def log_error(
         self,
@@ -152,7 +152,7 @@ class PostgresManager:
             traceback_str: Full traceback string
         """
         if not self.pool:
-            print(f"⚠️  PostgreSQL not connected, skipping log_error: {error_message}")
+            print(f"PostgreSQL not connected, skipping log_error: {error_message}")
             return
 
         query = """
@@ -174,7 +174,7 @@ class PostgresManager:
                     session_id or "default",
                 )
         except Exception as e:
-            print(f"⚠️  Failed to log error: {e}")
+            print(f"Failed to log error: {e}")
 
     async def log_query_metrics(
         self,
@@ -201,7 +201,7 @@ class PostgresManager:
             metadata: Additional metadata
         """
         if not self.pool:
-            print("⚠️  PostgreSQL not connected, skipping log_query_metrics")
+            print("PostgreSQL not connected, skipping log_query_metrics")
             return
 
         query_sql = """
@@ -225,7 +225,7 @@ class PostgresManager:
                     json.dumps(metadata or {}),
                 )
         except Exception as e:
-            print(f"⚠️  Failed to log query metrics: {e}")
+            print(f"Failed to log query metrics: {e}")
 
     async def get_prompt_logs(
         self,
@@ -268,7 +268,7 @@ class PostgresManager:
                 rows = await conn.fetch(query, *params)
                 return [dict(row) for row in rows]
         except Exception as e:
-            print(f"⚠️  Failed to get prompt logs: {e}")
+            print(f"Failed to get prompt logs: {e}")
             return []
 
     async def get_error_logs(
@@ -310,7 +310,7 @@ class PostgresManager:
                 rows = await conn.fetch(query, *params)
                 return [dict(row) for row in rows]
         except Exception as e:
-            print(f"⚠️  Failed to get error logs: {e}")
+            print(f"Failed to get error logs: {e}")
             return []
 
     async def get_query_count(self, hours: int = 24) -> int:
@@ -327,7 +327,7 @@ class PostgresManager:
             async with self.pool.acquire() as conn:
                 return await conn.fetchval(query, hours)
         except Exception as e:
-            print(f"⚠️  Failed to get query count: {e}")
+            print(f"Failed to get query count: {e}")
             return 0
 
     async def get_error_count(self, hours: int = 24, severity: str = "error") -> int:
@@ -345,7 +345,7 @@ class PostgresManager:
             async with self.pool.acquire() as conn:
                 return await conn.fetchval(query, hours, severity)
         except Exception as e:
-            print(f"⚠️  Failed to get error count: {e}")
+            print(f"Failed to get error count: {e}")
             return 0
 
     async def get_system_health(self) -> Dict[str, Any]:
@@ -371,7 +371,7 @@ class PostgresManager:
                     }
                 return health
         except Exception as e:
-            print(f"⚠️  Failed to get system health: {e}")
+            print(f"Failed to get system health: {e}")
             return {"status": "error", "error": str(e)}
 
     async def cleanup_old_logs(self, days: int = 30) -> None:
@@ -387,9 +387,9 @@ class PostgresManager:
         try:
             async with self.pool.acquire() as conn:
                 await conn.execute("SELECT cleanup_old_logs()")
-                print(f"✅ Cleaned up logs older than {days} days")
+                print(f"Cleaned up logs older than {days} days")
         except Exception as e:
-            print(f"⚠️  Failed to cleanup old logs: {e}")
+            print(f"Failed to cleanup old logs: {e}")
 
     async def health_check(self) -> bool:
         """

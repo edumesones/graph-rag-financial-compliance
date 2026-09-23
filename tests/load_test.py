@@ -237,10 +237,10 @@ class CacheTestUser(HttpUser):
                 # Cache hits should be significantly faster (<500ms ideally)
                 if response_time < 500:
                     response.success()
-                    print(f"✅ Fast response ({response_time:.0f}ms) - likely cache hit")
+                    print(f"Fast response ({response_time:.0f}ms) - likely cache hit")
                 else:
                     response.success()
-                    print(f"⏱️  Slow response ({response_time:.0f}ms) - likely cache miss")
+                    print(f"⏱Slow response ({response_time:.0f}ms) - likely cache miss")
             else:
                 response.failure(f"HTTP {response.status_code}")
 
@@ -250,7 +250,7 @@ class CacheTestUser(HttpUser):
 def on_test_start(environment, **kwargs):
     """Called when test starts"""
     print("\n" + "="*60)
-    print("🚀 Load Test Started")
+    print("Load Test Started")
     print("="*60)
     print(f"Target: {environment.host}")
     print(f"Users: {environment.runner.target_user_count if hasattr(environment.runner, 'target_user_count') else 'N/A'}")
@@ -261,7 +261,7 @@ def on_test_start(environment, **kwargs):
 def on_test_stop(environment, **kwargs):
     """Called when test stops - Print summary"""
     print("\n" + "="*60)
-    print("📊 Load Test Summary")
+    print("Load Test Summary")
     print("="*60)
 
     stats = environment.stats
@@ -282,20 +282,20 @@ def on_test_stop(environment, **kwargs):
         print(f"\nRequests per Second: {stats.total.total_rps:.2f}")
 
         # Performance assessment
-        print(f"\n🎯 Performance Assessment:")
+        print(f"\nPerformance Assessment:")
 
         avg_time = stats.total.avg_response_time
         p95_time = stats.total.get_response_time_percentile(0.95)
         fail_rate = stats.total.fail_ratio
 
         if avg_time < 2000 and p95_time < 3000 and fail_rate < 0.01:
-            print("  ✅ EXCELLENT - Meets all performance targets!")
+            print("  EXCELLENT - Meets all performance targets!")
         elif avg_time < 3000 and p95_time < 5000 and fail_rate < 0.05:
-            print("  ✔️  GOOD - Acceptable performance")
+            print("  GOOD - Acceptable performance")
         elif avg_time < 5000 and p95_time < 8000 and fail_rate < 0.10:
-            print("  ⚠️  FAIR - Performance needs improvement")
+            print("  FAIR - Performance needs improvement")
         else:
-            print("  ❌ POOR - Performance below targets")
+            print("  POOR - Performance below targets")
 
         print(f"\n  Target: Avg <2s, P95 <3s, Error <1%")
         print(f"  Actual: Avg {avg_time/1000:.1f}s, P95 {p95_time/1000:.1f}s, Error {fail_rate*100:.1f}%")

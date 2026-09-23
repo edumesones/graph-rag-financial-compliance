@@ -22,7 +22,7 @@ from src.advanced.feedback import RootCauseAnalyzer, FailureCategory, Severity
 
 def main():
     parser = argparse.ArgumentParser(description="Run Root Cause Analysis")
-    parser.add_argument("--record-failure", nargs=2, metavar=("CATEGORY", "MESSAGE"), 
+    parser.add_argument("--record-failure", nargs=2, metavar=("CATEGORY", "MESSAGE"),
                        help="Record a failure event")
     parser.add_argument("--analyze", action="store_true", help="Analyze failures")
     parser.add_argument("--list", action="store_true", help="List all failures")
@@ -30,7 +30,7 @@ def main():
     
     args = parser.parse_args()
     
-    print("🔍 Initializing RCA system...")
+    print("Initializing RCA system...")
     
     rca = RootCauseAnalyzer()
     
@@ -47,21 +47,21 @@ def main():
             severity=Severity.MEDIUM,
             context={"source": "manual"},
         )
-        print(f"✅ Recorded failure: {failure.event_id}")
+        print(f"Recorded failure: {failure.event_id}")
         print(f"   Category: {category.value}")
         print(f"   Message: {message}")
     
     if args.list:
         failures = rca.get_recent_failures(limit=10)
-        print(f"\n📋 Recent Failures ({len(failures)}):")
+        print(f"\nRecent Failures ({len(failures)}):")
         for failure in failures:
             print(f"   [{failure.category.value}] {failure.error_message[:60]}...")
     
     if args.analyze:
-        print("\n🔬 Analyzing failures...")
+        print("\nAnalyzing failures...")
         analysis = rca.analyze_failures()
         
-        print(f"\n📊 RCA Analysis:")
+        print(f"\nRCA Analysis:")
         print(f"   Total failures: {analysis.total_failures}")
         print(f"   Time period: {analysis.analysis_period_hours}h")
         print(f"\n   Root Causes:")
@@ -89,10 +89,10 @@ def main():
                     ],
                     "recommendations": analysis.recommendations,
                 }, f, indent=2)
-            print(f"\n💾 Analysis saved to: {args.export}")
+            print(f"\nAnalysis saved to: {args.export}")
     
     if not any([args.record_failure, args.analyze, args.list]):
-        print("\n💡 Usage examples:")
+        print("\nUsage examples:")
         print("   python src/run_rca.py --record-failure TIMEOUT 'Query timeout'")
         print("   python src/run_rca.py --analyze")
         print("   python src/run_rca.py --list")

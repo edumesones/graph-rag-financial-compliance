@@ -147,19 +147,19 @@ def validate_config() -> bool:
 
     # Warning: OpenAI API key (optional but recommended)
     if not config.llm.openai_api_key:
-        print("ℹ️  OPENAI_API_KEY not set (optional - using HuggingFace Inference API)")
+        print("ℹOPENAI_API_KEY not set (optional - using HuggingFace Inference API)")
 
     # Warning: LangSmith (optional)
     if config.langsmith.enabled and not config.langsmith.api_key:
         errors.append("LANGCHAIN_API_KEY not set but LANGCHAIN_TRACING_V2=true")
 
     if errors:
-        print("❌ Configuration errors:")
+        print("Configuration errors:")
         for error in errors:
             print(f"   - {error}")
         return False
 
-    print("✅ Configuration validated successfully")
+    print("Configuration validated successfully")
     print(f"   Environment: {config.environment}")
     print(f"   LLM Model: {config.llm.model}")
     print(f"   Embedding Model: {config.llm.embedding_model}")
@@ -190,8 +190,8 @@ def print_config_summary() -> None:
     print(f"  - Temperature: {config.llm.temperature}")
     print(f"  - Max Tokens: {config.llm.max_tokens}")
     print("\nMonitoring:")
-    print(f"  - LangSmith: {'✅ Enabled' if config.langsmith.enabled else '❌ Disabled'}")
-    print(f"  - Prometheus: {'✅ Enabled' if config.prometheus.enabled else '❌ Disabled'}")
+    print(f"  - LangSmith: {'Enabled' if config.langsmith.enabled else 'Disabled'}")
+    print(f"  - Prometheus: {'Enabled' if config.prometheus.enabled else 'Disabled'}")
     print("\nVector Store:")
     print(f"  - Path: {config.vectorstore.persist_directory}")
     print(f"  - Collection: {config.vectorstore.collection_name}")

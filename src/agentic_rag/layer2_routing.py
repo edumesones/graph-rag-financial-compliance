@@ -65,19 +65,19 @@ class RoutingLayer:
         self.llm = llm
         self.use_cache = use_cache
 
-        print("\n🔧 [Layer 2: Routing] Initializing...")
+        print("\n[Layer 2: Routing] Initializing...")
 
         if self.llm:
-            print(f"   ✅ LLM-based routing enabled")
+            print(f"   LLM-based routing enabled")
         else:
-            print(f"   ⚠️  Using rule-based routing (LLM not provided)")
+            print(f"   Using rule-based routing (LLM not provided)")
 
         if self.redis_cache:
-            print(f"   ✅ Redis cache available")
+            print(f"   Redis cache available")
         else:
-            print(f"   ⚠️  Redis cache not available")
+            print(f"   Redis cache not available")
 
-        print("   ✅ Layer 2 initialized\n")
+        print("   Layer 2 initialized\n")
     
     def route_query(
         self,
@@ -94,7 +94,7 @@ class RoutingLayer:
         Returns:
             RoutingDecision with strategy
         """
-        print(f"\n🧠 [Layer 2] Routing query...")
+        print(f"\n[Layer 2] Routing query...")
         print(f"   Query: {query[:100]}...")
 
         # Generate cache key
@@ -106,7 +106,7 @@ class RoutingLayer:
                 import asyncio
                 cached = asyncio.run(self.redis_cache.get(cache_key))
                 if cached:
-                    print(f"   ✅ Cache HIT! Returning cached routing decision")
+                    print(f"   Cache HIT! Returning cached routing decision")
                     # Reconstruct RoutingDecision from cached dict
                     return RoutingDecision(
                         query_type=QueryType(cached["query_type"]),
@@ -116,7 +116,7 @@ class RoutingLayer:
                         metadata={**cached.get("metadata", {}), "from_cache": True},
                     )
             except Exception as e:
-                print(f"   ⚠️  Cache read error: {e}")
+                print(f"   Cache read error: {e}")
 
         print(f"   Cache MISS - executing routing")
         start_time = time.time()
@@ -129,11 +129,11 @@ class RoutingLayer:
 
             elapsed = (time.time() - start_time) * 1000
 
-            print(f"   ✅ Route decided: {decision.query_type.value}")
-            print(f"   📊 Confidence: {decision.confidence:.2f}")
-            print(f"   🛠️  Tools: {', '.join(decision.recommended_tools)}")
-            print(f"   💭 Reasoning: {decision.reasoning}")
-            print(f"   ⏱️  Routing completed ({elapsed:.0f}ms)")
+            print(f"   Route decided: {decision.query_type.value}")
+            print(f"   Confidence: {decision.confidence:.2f}")
+            print(f"   Tools: {', '.join(decision.recommended_tools)}")
+            print(f"   Reasoning: {decision.reasoning}")
+            print(f"   ⏱Routing completed ({elapsed:.0f}ms)")
 
             # Cache the result
             if self.redis_cache:
@@ -148,9 +148,9 @@ class RoutingLayer:
                     # Cache for 1 hour (3600 seconds)
                     import asyncio
                     asyncio.run(self.redis_cache.set(cache_key, cache_data, ttl=3600))
-                    print(f"   ✅ Routing decision cached")
+                    print(f"   Routing decision cached")
                 except Exception as e:
-                    print(f"   ⚠️  Cache write error: {e}")
+                    print(f"   Cache write error: {e}")
 
             # Log decision
             self.logger.log_prompt(
@@ -204,7 +204,7 @@ class RoutingLayer:
             return decision
             
         except Exception as e:
-            print(f"   ⚠️  LLM routing failed, falling back to rules: {e}")
+            print(f"   LLM routing failed, falling back to rules: {e}")
             return self._route_with_rules(query, context)
     
     def _build_llm_routing_prompt(
@@ -260,7 +260,7 @@ Respond ONLY with the JSON object, no other text."""
                 metadata=data.get('metadata', {})
             )
         except Exception as e:
-            print(f"   ⚠️  Failed to parse LLM response: {e}")
+            print(f"   Failed to parse LLM response: {e}")
             # Fallback
             return RoutingDecision(
                 query_type=QueryType.SEMANTIC,

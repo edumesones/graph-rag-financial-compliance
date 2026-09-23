@@ -127,7 +127,7 @@ async def lifespan(app: FastAPI):
     global postgres_manager, redis_cache
 
     print("\n" + "=" * 80)
-    print("🚀 STARTING FINTECH AGENTIC RAG (DOCKER EDITION)")
+    print("STARTING FINTECH AGENTIC RAG (DOCKER EDITION)")
     print("=" * 80)
 
     # Validate configuration
@@ -169,7 +169,7 @@ async def lifespan(app: FastAPI):
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True},
         )
-        print(f"   ✅ Embeddings loaded: {config.llm.embedding_model}")
+        print(f"   Embeddings loaded: {config.llm.embedding_model}")
 
         # 4. Connect to vector store
         print("\n[Startup] Connecting to ChromaDB...")
@@ -179,7 +179,7 @@ async def lifespan(app: FastAPI):
             collection_name=config.vectorstore.collection_name,
         )
         doc_count = vectorstore._collection.count()
-        print(f"   ✅ Vector store loaded: {doc_count} documents")
+        print(f"   Vector store loaded: {doc_count} documents")
 
         # 5. Connect to Neo4j graph (optional)
         print("\n[Startup] Connecting to Neo4j...")
@@ -190,9 +190,9 @@ async def lifespan(app: FastAPI):
                 password=config.neo4j.password,
                 database=config.neo4j.database,
             )
-            print(f"   ✅ Graph database connected: {config.neo4j.uri}")
+            print(f"   Graph database connected: {config.neo4j.uri}")
         except Exception as e:
-            print(f"   ⚠️  Graph database not available: {e}")
+            print(f"   Graph database not available: {e}")
             graph = None
 
         # 6. Configure LLM
@@ -204,7 +204,7 @@ async def lifespan(app: FastAPI):
             temperature=config.llm.temperature,
             max_tokens=config.llm.max_tokens,
         )
-        print(f"   ✅ LLM configured: {config.llm.model}")
+        print(f"   LLM configured: {config.llm.model}")
 
         # 7. Create Agentic RAG Orchestrator
         print("\n[Startup] Creating Agentic RAG Orchestrator...")
@@ -214,27 +214,27 @@ async def lifespan(app: FastAPI):
             embeddings=embeddings,
             graph=graph,
         )
-        print("   ✅ Orchestrator ready")
+        print("   Orchestrator ready")
 
         # 8. Initialize Prometheus metrics
         print("\n[Startup] Initializing Prometheus metrics...")
         metrics.init_metrics(app_name=config.app_name, version=config.version)
 
         print("\n" + "=" * 80)
-        print("✅ STARTUP COMPLETE")
+        print("STARTUP COMPLETE")
         print("=" * 80 + "\n")
 
         yield  # Application runs here
 
     except Exception as e:
-        print(f"\n❌ STARTUP FAILED: {e}")
+        print(f"\nSTARTUP FAILED: {e}")
         traceback.print_exc()
         raise
 
     finally:
         # === SHUTDOWN ===
         print("\n" + "=" * 80)
-        print("🛑 SHUTTING DOWN")
+        print("SHUTTING DOWN")
         print("=" * 80)
 
         if postgres_manager:
@@ -246,7 +246,7 @@ async def lifespan(app: FastAPI):
             await redis_cache.disconnect()
 
         print("\n" + "=" * 80)
-        print("✅ SHUTDOWN COMPLETE")
+        print("SHUTDOWN COMPLETE")
         print("=" * 80 + "\n")
 
 
@@ -306,7 +306,7 @@ async def analyze_compliance(request: AnalyzeRequest) -> Dict[str, Any]:
     start_time = time.time()
 
     print("\n" + "=" * 80)
-    print("🚀 AGENTIC RAG REQUEST")
+    print("AGENTIC RAG REQUEST")
     print("=" * 80)
     print(f"Company: {request.company}")
     print(f"Query: {request.query[:100]}...")
@@ -318,7 +318,7 @@ async def analyze_compliance(request: AnalyzeRequest) -> Dict[str, Any]:
         if redis_cache:
             cached_result = await redis_cache.get(cache_key)
             if cached_result:
-                print("   ✅ Cache hit!")
+                print("   Cache hit!")
                 metrics.record_cache_hit("redis")
                 metrics.rag_active_requests.dec()
                 return {
@@ -387,7 +387,7 @@ async def analyze_compliance(request: AnalyzeRequest) -> Dict[str, Any]:
             endpoint="/analyze_compliance", layer="total"
         ).observe(total_elapsed / 1000)
 
-        print(f"\n✅ Request completed in {total_elapsed:.0f}ms")
+        print(f"\nRequest completed in {total_elapsed:.0f}ms")
         print("=" * 80 + "\n")
 
         metrics.rag_active_requests.dec()
@@ -397,7 +397,7 @@ async def analyze_compliance(request: AnalyzeRequest) -> Dict[str, Any]:
         error_msg = str(e)
         trace = traceback.format_exc()
 
-        print(f"\n❌ ERROR: {error_msg}")
+        print(f"\nERROR: {error_msg}")
         print(trace)
 
         # Log error to PostgreSQL
@@ -491,7 +491,7 @@ async def get_system_stats() -> Dict[str, Any]:
         }
 
     except Exception as e:
-        print(f"⚠️  Error getting system stats: {e}")
+        print(f"Error getting system stats: {e}")
         raise HTTPException(
             status_code=500,
             detail={"error": str(e), "status": "error"},
@@ -532,7 +532,7 @@ async def get_prompt_logs(
         }
 
     except Exception as e:
-        print(f"⚠️  Error getting prompt logs: {e}")
+        print(f"Error getting prompt logs: {e}")
         raise HTTPException(
             status_code=500,
             detail={"error": str(e), "status": "error"},
@@ -624,7 +624,7 @@ if __name__ == "__main__":
     import uvicorn
 
     print("\n" + "=" * 80)
-    print("🚀 STARTING DEVELOPMENT SERVER")
+    print("STARTING DEVELOPMENT SERVER")
     print("=" * 80)
     print(f"Service: {config.app_name} v{config.version}")
     print(f"Environment: {config.environment}")

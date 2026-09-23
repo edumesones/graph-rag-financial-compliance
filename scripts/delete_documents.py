@@ -94,7 +94,7 @@ def list_documents(vectorstore: Chroma, limit: int = 10):
         return
     
     total = len(all_docs["ids"])
-    print(f"\n📋 Documents in collection: {total}")
+    print(f"\nDocuments in collection: {total}")
     print(f"   Showing first {min(limit, total)}:\n")
     
     for i in range(min(limit, total)):
@@ -122,11 +122,11 @@ def main():
     args = parser.parse_args()
     
     print("="*60)
-    print("🗑️  CHROMADB DOCUMENT DELETION")
+    print("CHROMADB DOCUMENT DELETION")
     print("="*60)
     
     # Initialize embeddings and vectorstore
-    print("\n📦 Loading vector store...")
+    print("\nLoading vector store...")
     try:
         embeddings = HuggingFaceEmbeddings(
             model_name="BAAI/bge-large-en-v1.5",
@@ -142,12 +142,12 @@ def main():
         )
         
         initial_count = vectorstore._collection.count()
-        print(f"✅ Vector store loaded")
+        print(f"Vector store loaded")
         print(f"   Persist directory: {persist_dir}")
         print(f"   Current documents: {initial_count}")
         
     except Exception as e:
-        print(f"❌ Error loading vector store: {e}")
+        print(f"Error loading vector store: {e}")
         return
     
     # List documents
@@ -157,40 +157,40 @@ def main():
     
     # Show count only
     if args.count:
-        print(f"\n📊 Total documents: {initial_count}")
+        print(f"\nTotal documents: {initial_count}")
         return
     
     # Delete operations
     deleted_count = 0
     
     if args.all:
-        print(f"\n⚠️  WARNING: This will delete ALL {initial_count} documents!")
+        print(f"\nWARNING: This will delete ALL {initial_count} documents!")
         response = input("Are you sure? (yes/no): ")
         if response.lower() == "yes":
             deleted_count = delete_all_documents(vectorstore)
-            print(f"✅ Deleted {deleted_count} documents")
+            print(f"Deleted {deleted_count} documents")
         else:
-            print("❌ Cancelled")
+            print("Cancelled")
     
     elif args.source:
-        print(f"\n🔍 Searching for documents with source: {args.source}")
+        print(f"\nSearching for documents with source: {args.source}")
         deleted_count = delete_by_source(vectorstore, args.source)
-        print(f"✅ Deleted {deleted_count} documents")
+        print(f"Deleted {deleted_count} documents")
     
     elif args.company:
-        print(f"\n🔍 Searching for documents with company: {args.company}")
+        print(f"\nSearching for documents with company: {args.company}")
         deleted_count = delete_by_company(vectorstore, args.company)
-        print(f"✅ Deleted {deleted_count} documents")
+        print(f"Deleted {deleted_count} documents")
     
     elif args.ids:
-        print(f"\n🔍 Deleting {len(args.ids)} document IDs...")
+        print(f"\nDeleting {len(args.ids)} document IDs...")
         deleted_count = delete_by_ids(vectorstore, args.ids)
-        print(f"✅ Deleted {deleted_count} documents")
+        print(f"Deleted {deleted_count} documents")
         if deleted_count < len(args.ids):
-            print(f"⚠️  {len(args.ids) - deleted_count} IDs were not found")
+            print(f"{len(args.ids) - deleted_count} IDs were not found")
     
     else:
-        print("\n💡 Usage examples:")
+        print("\nUsage examples:")
         print("   python src/delete_documents.py --list                    # List documents")
         print("   python src/delete_documents.py --count                   # Show count")
         print("   python src/delete_documents.py --all                     # Delete all")
@@ -202,7 +202,7 @@ def main():
     # Show final count
     if deleted_count > 0:
         final_count = vectorstore._collection.count()
-        print(f"\n📊 Final document count: {final_count}")
+        print(f"\nFinal document count: {final_count}")
         print(f"   Deleted: {deleted_count}")
         print(f"   Remaining: {final_count}")
 

@@ -22,7 +22,7 @@ from src.advanced.feedback import HITLPipeline, FeedbackType
 
 def main():
     parser = argparse.ArgumentParser(description="Run Human-in-the-Loop feedback")
-    parser.add_argument("--submit-feedback", nargs=4, 
+    parser.add_argument("--submit-feedback", nargs=4,
                        metavar=("QUERY", "AGENT_OUTPUT", "HUMAN_INPUT", "RATING"),
                        help="Submit human feedback")
     parser.add_argument("--list-feedback", action="store_true", help="List all feedback")
@@ -31,7 +31,7 @@ def main():
     
     args = parser.parse_args()
     
-    print("👤 Initializing HITL system...")
+    print("Initializing HITL system...")
     
     hitl = HITLPipeline()
     
@@ -46,13 +46,13 @@ def main():
             rating=int(rating) if rating.isdigit() else None,
         )
         
-        print(f"✅ Feedback submitted: {feedback.feedback_id}")
+        print(f"Feedback submitted: {feedback.feedback_id}")
         print(f"   Query: {query[:60]}...")
         print(f"   Rating: {feedback.rating}")
     
     if args.list_feedback:
         feedbacks = hitl.feedback_records[-10:]  # Last 10
-        print(f"\n📋 Recent Feedback ({len(feedbacks)}):")
+        print(f"\nRecent Feedback ({len(feedbacks)}):")
         for fb in feedbacks:
             print(f"   [{fb.feedback_id}] {fb.query[:50]}...")
             print(f"      Rating: {fb.rating}, Type: {fb.feedback_type.value}")
@@ -62,11 +62,11 @@ def main():
         feedback = next((f for f in hitl.feedback_records if f.feedback_id == args.validate), None)
         if feedback:
             result = hitl.validate_output(feedback)
-            print(f"\n✅ Validation Result:")
+            print(f"\nValidation Result:")
             print(f"   Valid: {result.is_valid}")
             print(f"   Confidence: {result.confidence_score:.2f}")
         else:
-            print(f"❌ Feedback not found: {args.validate}")
+            print(f"Feedback not found: {args.validate}")
     
     if args.export:
         feedbacks = hitl.feedback_records
@@ -87,10 +87,10 @@ def main():
         }
         with open(args.export, 'w') as f:
             json.dump(output, f, indent=2)
-        print(f"\n💾 Feedback exported to: {args.export}")
+        print(f"\nFeedback exported to: {args.export}")
     
     if not any([args.submit_feedback, args.list_feedback, args.validate, args.export]):
-        print("\n💡 Usage examples:")
+        print("\nUsage examples:")
         print("   python src/run_hitl.py --submit-feedback 'query' 'agent output' 'correction' '4'")
         print("   python src/run_hitl.py --list-feedback")
         print("   python src/run_hitl.py --validate feedback_123")

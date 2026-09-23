@@ -215,24 +215,24 @@ def ingest_sec_filings(
     download_dir = os.path.join(data_dir, "sec-data")
 
     os.makedirs(download_dir, exist_ok=True)
-    print(f"📁 Download directory: {download_dir}")
+    print(f"Download directory: {download_dir}")
 
     # Initialize downloader
-    print(f"🔧 Initializing Downloader...")
+    print(f"Initializing Downloader...")
     dl = Downloader(download_dir, user_agent)
-    print(f"✅ Downloader initialized")
+    print(f"Downloader initialized")
 
     try:
-        print(f"⬇️  Starting download for {company_ticker}...")
+        print(f"Starting download for {company_ticker}...")
         result = dl.get("10-K", company_ticker, limit=limit)
-        print(f"✅ Download call completed")
+        print(f"Download call completed")
     except Exception as e:
-        print(f"❌ Download error: {e}")
+        print(f"Download error: {e}")
         import traceback
         traceback.print_exc()
 
     # 2. Extract text from filings
-    print("\n📄 Extracting clean text from filings...")
+    print("\nExtracting clean text from filings...")
     documents = []
 
     extractor = SECTextExtractor()
@@ -250,10 +250,10 @@ def ingest_sec_filings(
             company_dirs = glob.glob(f"{search_path}/{company_ticker}/**/", recursive=True)
             filing_dirs.extend([d for d in company_dirs if os.path.isdir(d)])
 
-    print(f"\n📊 Found {len(filing_dirs)} filing directories")
+    print(f"\nFound {len(filing_dirs)} filing directories")
 
     if len(filing_dirs) == 0:
-        print("⚠️  WARNING: No filing directories found! Check download location.")
+        print("WARNING: No filing directories found! Check download location.")
         return {
             "status": "error",
             "error": "No filing directories found after download",
@@ -262,30 +262,30 @@ def ingest_sec_filings(
 
     # Extract text from each filing
     for filing_dir in filing_dirs[:limit]:
-        print(f"\n📂 Processing: {filing_dir}")
+        print(f"\nProcessing: {filing_dir}")
 
         text = extractor.extract_from_filing_directory(filing_dir)
 
         if text and len(text.strip()) > 100:
-            print(f"   ✅ Using full document ({len(text)} chars)")
+            print(f"   Using full document ({len(text)} chars)")
 
             documents.append({
                 "text": text,
                 "source": filing_dir,
                 "company": company_ticker
             })
-            print(f"   ✅ Extracted {len(text)} characters")
+            print(f"   Extracted {len(text)} characters")
         else:
-            print(f"   ⚠️  No readable text found in this filing")
+            print(f"   No readable text found in this filing")
 
-    print(f"\n✅ Extracted {len(documents)} documents with clean text")
+    print(f"\nExtracted {len(documents)} documents with clean text")
 
     # 3. Extract entities using LLM
     print(f"Extracting entities with deepseek-ai/DeepSeek-R1-0528-Qwen3-8B:novita...")
     hf_token = os.environ.get("HUGGINGFACE_TOKEN", "")
 
     if not hf_token:
-        print("⚠️  WARNING: HUGGINGFACE_TOKEN not set in environment")
+        print("WARNING: HUGGINGFACE_TOKEN not set in environment")
 
     llm = ChatOpenAI(
         model="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B:novita",
@@ -362,7 +362,7 @@ JSON:"""
 
     # 6. Embed and store in ChromaDB
     print("\n" + "="*60)
-    print("📦 Step 6: Embedding and storing documents in ChromaDB...")
+    print("Step 6: Embedding and storing documents in ChromaDB...")
     print("="*60)
 
     # Check if collection exists
@@ -373,10 +373,10 @@ JSON:"""
             collection_name="fintech-rag-demo"
         )
         existing_count = existing_vectorstore._collection.count()
-        print(f"\n📊 Existing collection found: {existing_count} documents")
+        print(f"\nExisting collection found: {existing_count} documents")
 
         if existing_count > 0:
-            print(f"🔍 Checking for duplicates...")
+            print(f"Checking for duplicates...")
             try:
                 existing_docs = existing_vectorstore.get(include=["metadatas"])
                 existing_sources = set()
@@ -400,33 +400,33 @@ JSON:"""
                 print(f"   Skipped (already exist): {skipped_count}")
 
                 if len(new_splits) > 0:
-                    print(f"✅ Adding {len(new_splits)} new documents...")
+                    print(f"Adding {len(new_splits)} new documents...")
                     existing_vectorstore.add_documents(new_splits)
                     vectorstore = existing_vectorstore
                     final_count = existing_vectorstore._collection.count()
-                    print(f"✅ Added {len(new_splits)} documents. Total: {final_count}")
+                    print(f"Added {len(new_splits)} documents. Total: {final_count}")
                 else:
-                    print(f"⚠️  All documents already exist. Nothing to add.")
+                    print(f"All documents already exist. Nothing to add.")
                     vectorstore = existing_vectorstore
                     print(f"   Total documents: {existing_count}")
 
             except Exception as e:
-                print(f"⚠️  Could not check for duplicates: {e}")
+                print(f"Could not check for duplicates: {e}")
                 print(f"   Adding all documents (may create duplicates)...")
                 existing_vectorstore.add_documents(splits)
                 vectorstore = existing_vectorstore
-                print(f"✅ Added {len(splits)} documents. Total: {existing_vectorstore._collection.count()}")
+                print(f"Added {len(splits)} documents. Total: {existing_vectorstore._collection.count()}")
         else:
-            print(f"⚠️  Collection exists but is empty. Creating new collection...")
+            print(f"Collection exists but is empty. Creating new collection...")
             vectorstore = Chroma.from_documents(
                 documents=splits,
                 embedding=embeddings,
                 persist_directory=vectors_dir,
                 collection_name="fintech-rag-demo"
             )
-            print(f"✅ Created collection with {len(splits)} documents")
+            print(f"Created collection with {len(splits)} documents")
     except Exception as e:
-        print(f"\n📝 Collection doesn't exist. Creating new collection...")
+        print(f"\nCollection doesn't exist. Creating new collection...")
         print(f"   Embedding {len(splits)} documents (this may take a few minutes)...")
         vectorstore = Chroma.from_documents(
             documents=splits,
@@ -434,14 +434,14 @@ JSON:"""
             persist_directory=vectors_dir,
             collection_name="fintech-rag-demo"
         )
-        print(f"✅ Created collection with {len(splits)} documents")
+        print(f"Created collection with {len(splits)} documents")
 
-    print(f"\n✅ Vector store persisted to {vectors_dir}")
+    print(f"\nVector store persisted to {vectors_dir}")
     print(f"   Total documents in collection: {vectorstore._collection.count()}")
 
     # 7. Build knowledge graph in Neo4j
     print("\n" + "="*60)
-    print("🔗 Step 7: Building knowledge graph in Neo4j...")
+    print("Step 7: Building knowledge graph in Neo4j...")
     print("="*60)
 
     # Get Neo4j credentials from environment
@@ -449,19 +449,19 @@ JSON:"""
     neo4j_user = os.environ.get("NEO4J_USER", "neo4j")
     neo4j_password = os.environ.get("NEO4J_PASSWORD", "")
 
-    print(f"\n📋 Neo4j Configuration:")
+    print(f"\nNeo4j Configuration:")
     print(f"   URI: {neo4j_uri if neo4j_uri else 'NOT SET'}")
     print(f"   User: {neo4j_user}")
     print(f"   Password: {'*' * len(neo4j_password) if neo4j_password else 'NOT SET'}")
 
     if not neo4j_uri or not neo4j_password:
-        print("\n❌ ERROR: Neo4j credentials not configured!")
-        print("\n💡 Solution:")
+        print("\nERROR: Neo4j credentials not configured!")
+        print("\nSolution:")
         print("   Set environment variables:")
         print("   export NEO4J_URI=bolt://neo4j:7687")
         print("   export NEO4J_USER=neo4j")
         print("   export NEO4J_PASSWORD=your-password")
-        print("\n⚠️  Vector store is SAFE - it's persisted")
+        print("\nVector store is SAFE - it's persisted")
         print("   Only the graph database connection failed")
         return {
             "status": "partial_success",
@@ -471,7 +471,7 @@ JSON:"""
         }
 
     # Test connection
-    print(f"\n🔌 Testing Neo4j connection...")
+    print(f"\nTesting Neo4j connection...")
     driver = None
     try:
         driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_password))
@@ -480,17 +480,17 @@ JSON:"""
             result = test_session.run("RETURN 1 as test")
             test_value = result.single()["test"]
             if test_value == 1:
-                print(f"   ✅ Connection successful!")
+                print(f"   Connection successful!")
             else:
                 raise Exception("Connection test returned unexpected value")
 
     except Exception as e:
-        print(f"\n❌ ERROR: Neo4j connection failed: {e}")
-        print(f"\n💡 Troubleshooting:")
+        print(f"\nERROR: Neo4j connection failed: {e}")
+        print(f"\nTroubleshooting:")
         print(f"   1. Verify Neo4j is running: docker-compose ps")
         print(f"   2. Check URI: {neo4j_uri}")
         print(f"   3. Verify credentials")
-        print("\n⚠️  Vector store is SAFE")
+        print("\nVector store is SAFE")
         if driver:
             try:
                 driver.close()
@@ -505,14 +505,14 @@ JSON:"""
         }
 
     # Create graph
-    print(f"\n📊 Creating graph indexes and nodes...")
+    print(f"\nCreating graph indexes and nodes...")
     try:
         with driver.session() as session:
             # Create indexes
             print(f"   Creating indexes...")
             session.run("CREATE INDEX company_name IF NOT EXISTS FOR (c:Company) ON (c.name)")
             session.run("CREATE INDEX regulation_name IF NOT EXISTS FOR (r:Regulation) ON (r.name)")
-            print(f"   ✅ Indexes created")
+            print(f"   Indexes created")
 
             # Insert entities
             print(f"   Inserting {len(entities_list)} entity sets...")
@@ -561,13 +561,13 @@ JSON:"""
                 if (idx + 1) % 10 == 0:
                     print(f"   Processed {idx + 1}/{len(entities_list)} entity sets...")
 
-            print(f"✅ Graph database populated!")
+            print(f"Graph database populated!")
             print(f"   Total nodes created: ~{total_nodes}")
 
             driver.close()
     except Exception as e:
-        print(f"❌ ERROR building knowledge graph: {e}")
-        print(f"\n⚠️  Vector store is SAFE")
+        print(f"ERROR building knowledge graph: {e}")
+        print(f"\nVector store is SAFE")
         try:
             driver.close()
         except:
@@ -580,7 +580,7 @@ JSON:"""
             "message": "Vector store saved successfully. Graph database insertion failed."
         }
 
-    print("✅ Knowledge graph built successfully")
+    print("Knowledge graph built successfully")
 
     # 8. Return statistics
     return {
@@ -656,7 +656,7 @@ def main():
     print("INGESTION COMPLETE")
     print(f"{'='*60}")
     print(json.dumps(result, indent=2))
-    print(f"\n✅ Data ready for querying!")
+    print(f"\nData ready for querying!")
     print(f"   - Vector store: {args.vectors_dir}")
     print(f"   - Graph database: {os.getenv('NEO4J_URI', 'bolt://neo4j:7687')}")
 

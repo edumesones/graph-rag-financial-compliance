@@ -12,7 +12,7 @@ def test_neo4j_connection(neo4j_connection):
         result = session.run("RETURN 1 AS test")
         record = result.single()
         assert record["test"] == 1
-        print("✅ Neo4j connection successful")
+        print("Neo4j connection successful")
 
 
 def test_neo4j_database_exists(neo4j_connection):
@@ -24,10 +24,10 @@ def test_neo4j_database_exists(neo4j_connection):
             record = result.single()
             if record:
                 db_name = record["value"]
-                print(f"✅ Connected to database: {db_name}")
+                print(f"Connected to database: {db_name}")
         except Exception:
             # Older Neo4j versions may not support this
-            print("⚠️  Could not determine database name (older Neo4j version)")
+            print("Could not determine database name (older Neo4j version)")
 
 
 def test_create_test_node(neo4j_connection):
@@ -48,11 +48,11 @@ def test_create_test_node(neo4j_connection):
         assert record["name"] == "pytest_test_node"
 
         node_id = record["node_id"]
-        print(f"✅ Created test node with ID: {node_id}")
+        print(f"Created test node with ID: {node_id}")
 
         # Clean up: delete the test node
         session.run("MATCH (n:TestNode {name: $name}) DELETE n", name="pytest_test_node")
-        print("✅ Cleaned up test node")
+        print("Cleaned up test node")
 
 
 def test_query_existing_nodes(neo4j_connection):
@@ -63,7 +63,7 @@ def test_query_existing_nodes(neo4j_connection):
         record = result.single()
         total_nodes = record["total"]
 
-        print(f"✅ Total nodes in graph: {total_nodes}")
+        print(f"Total nodes in graph: {total_nodes}")
 
         # If nodes exist, test querying them
         if total_nodes > 0:
@@ -88,14 +88,14 @@ def test_create_relationship(neo4j_connection):
         assert record is not None
         assert record["rel_type"] == "COMPLIES_WITH"
 
-        print(f"✅ Created relationship: Company {record['company_id']} -> Regulation {record['regulation_id']}")
+        print(f"Created relationship: Company {record['company_id']} -> Regulation {record['regulation_id']}")
 
         # Clean up
         session.run("""
             MATCH (a:TestCompany {name: $company1})-[r:COMPLIES_WITH]-(b:TestRegulation {name: $regulation})
             DELETE r, a, b
         """, company1="Test Corp", regulation="Test Regulation")
-        print("✅ Cleaned up test nodes and relationship")
+        print("Cleaned up test nodes and relationship")
 
 
 def test_graph_traversal(neo4j_connection):
@@ -122,14 +122,14 @@ def test_graph_traversal(neo4j_connection):
         assert record["violation"] == "SEC-001"
         assert record["regulation"] == "REG-001"
 
-        print("✅ Graph traversal successful")
+        print("Graph traversal successful")
 
         # Clean up
         session.run("""
             MATCH (c:TestCompany {name: 'TraversalTest Inc'})-[r1]->(v)-[r2]->(reg:TestRegulation)
             DELETE r1, r2, c, v, reg
         """)
-        print("✅ Cleaned up traversal test graph")
+        print("Cleaned up traversal test graph")
 
 
 def test_cypher_query_performance(neo4j_connection):
@@ -157,11 +157,11 @@ def test_cypher_query_performance(neo4j_connection):
         record = result.single()
         assert record["total"] == 50
 
-        print(f"✅ Performance: Created 100 nodes in {create_time:.3f}s, queried in {query_time:.3f}s")
+        print(f"Performance: Created 100 nodes in {create_time:.3f}s, queried in {query_time:.3f}s")
 
         # Clean up
         session.run("MATCH (n:TestPerfNode) DELETE n")
-        print("✅ Cleaned up performance test nodes")
+        print("Cleaned up performance test nodes")
 
 
 def test_entity_extraction_pattern(neo4j_connection):
@@ -194,7 +194,7 @@ def test_entity_extraction_pattern(neo4j_connection):
         assert record is not None
         assert record["company"] == entities["company"]
 
-        print("✅ Entity extraction pattern successful")
+        print("Entity extraction pattern successful")
 
         # Clean up
         session.run("""
@@ -203,7 +203,7 @@ def test_entity_extraction_pattern(neo4j_connection):
             MATCH (v:Violation {description: $violation})
             DETACH DELETE c, r, v
         """, **entities)
-        print("✅ Cleaned up entity extraction test")
+        print("Cleaned up entity extraction test")
 
 
 def test_concurrent_writes(neo4j_connection):
@@ -231,7 +231,7 @@ def test_concurrent_writes(neo4j_connection):
             session.close()
 
     assert len(created_ids) == 20
-    print(f"✅ Created {len(created_ids)} nodes concurrently")
+    print(f"Created {len(created_ids)} nodes concurrently")
 
     # Verify all nodes were created
     with neo4j_connection.session() as session:
@@ -241,7 +241,7 @@ def test_concurrent_writes(neo4j_connection):
 
         # Clean up
         session.run("MATCH (n:ConcurrentTest) DELETE n")
-        print("✅ Cleaned up concurrent test nodes")
+        print("Cleaned up concurrent test nodes")
 
 
 def test_relationship_properties(neo4j_connection):
@@ -271,11 +271,11 @@ def test_relationship_properties(neo4j_connection):
         assert record["strength"] == 0.95
         assert record["source"] == "document_123"
 
-        print("✅ Relationship properties stored and retrieved correctly")
+        print("Relationship properties stored and retrieved correctly")
 
         # Clean up
         session.run("MATCH (n:TestEntity) DETACH DELETE n")
-        print("✅ Cleaned up relationship property test")
+        print("Cleaned up relationship property test")
 
 
 def test_index_usage(neo4j_connection):
@@ -301,15 +301,15 @@ def test_index_usage(neo4j_connection):
             assert record is not None
             assert record["value"] == 500
 
-            print("✅ Index usage successful")
+            print("Index usage successful")
 
             # Clean up
             session.run("MATCH (n:TestIndexNode) DELETE n")
             session.run("DROP INDEX test_index_name IF EXISTS")
-            print("✅ Cleaned up index test")
+            print("Cleaned up index test")
 
         except Exception as e:
-            print(f"⚠️  Index test skipped: {e}")
+            print(f"Index test skipped: {e}")
             # Clean up even on failure
             session.run("MATCH (n:TestIndexNode) DELETE n")
 
@@ -342,7 +342,7 @@ def test_complex_graph_query(neo4j_connection):
         assert "Company Alpha" in companies
         assert "Company Beta" in companies
 
-        print(f"✅ Complex query found {len(companies)} companies")
+        print(f"Complex query found {len(companies)} companies")
 
         # Clean up
         session.run("""
@@ -351,7 +351,7 @@ def test_complex_graph_query(neo4j_connection):
             MATCH (r:TestRegulation)
             DETACH DELETE c, v, r
         """)
-        print("✅ Cleaned up complex query test")
+        print("Cleaned up complex query test")
 
 
 def test_transaction_rollback(neo4j_connection):
@@ -373,10 +373,10 @@ def test_transaction_rollback(neo4j_connection):
         except Exception:
             # Transaction should rollback
             tx.rollback()
-            print("✅ Transaction rolled back on error")
+            print("Transaction rolled back on error")
 
         # Verify node was not created
         result = session.run("MATCH (n:TestRollback) RETURN count(n) AS total")
         record = result.single()
         assert record["total"] == 0
-        print("✅ Verified rollback - node not persisted")
+        print("Verified rollback - node not persisted")
