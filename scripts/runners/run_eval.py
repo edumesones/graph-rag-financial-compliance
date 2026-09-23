@@ -2,9 +2,9 @@
 Script para ejecutar evaluación de agentes
 
 Uso:
-    python src/run_eval.py
-    python src/run_eval.py --plan fintech_basic
-    python src/run_eval.py --test-case "What SEC violations occurred?"
+    python scripts/runners/run_eval.py
+    python scripts/runners/run_eval.py --plan fintech_basic
+    python scripts/runners/run_eval.py --test-case "What SEC violations occurred?"
 """
 
 import os
@@ -14,9 +14,9 @@ import json
 from typing import Dict, Any
 
 # Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from src.eval import AgentEvaluator, EvaluationPlanner
+from src.advanced.eval import AgentEvaluator, EvaluationPlanner
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain_community.vectorstores import Chroma
 from langchain_community.graphs import Neo4jGraph
@@ -155,7 +155,7 @@ def main():
     if args.test_case:
         # Single test case
         print(f"\n📝 Running single test case: {args.test_case}")
-        from src.eval.planning import TestCase, TestScenario
+        from src.advanced.eval.planning import TestCase, TestScenario
         test_case = TestCase(
             test_id="manual_test",
             input_query=args.test_case,
@@ -180,8 +180,8 @@ def main():
         print(f"   Total tests: {summary['total_tests']}")
         print(f"   Passed: {summary['passed_tests']}")
         print(f"   Failed: {summary['failed_tests']}")
-        print(f"   Success rate: {summary['success_rate']:.2%}")
-        print(f"   Avg latency: {summary['avg_latency_ms']:.2f}ms")
+        print(f"   Success rate: {summary['pass_rate']:.2%}")
+        print(f"   Avg latency: {summary['average_latency_ms']:.2f}ms")
         
         # Save results
         if args.output:
