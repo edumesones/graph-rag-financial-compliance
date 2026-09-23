@@ -13,7 +13,7 @@ async def test_redis_connection(redis_cache):
     # Connection should be established by fixture
     # Try a simple ping operation
     try:
-        await redis_cache.redis.ping()
+        await redis_cache.client.ping()
         print("Redis connection successful")
     except Exception as e:
         pytest.fail(f"Redis connection failed: {e}")
@@ -84,6 +84,11 @@ async def test_exists_check(redis_cache):
     """Test checking if key exists"""
     key = "test_exists_key"
 
+    # The previous run stores this key with a 60s TTL, so it can still be
+    # present. Clear it first: the test asserts on absence, not on the state
+    # a prior run happened to leave behind.
+    await redis_cache.delete(key)
+
     # Should not exist initially
     exists_before = await redis_cache.exists(key)
     assert exists_before is False
@@ -95,6 +100,7 @@ async def test_exists_check(redis_cache):
     exists_after = await redis_cache.exists(key)
     assert exists_after is True
 
+    await redis_cache.delete(key)
     print("Exists check working correctly")
 
 

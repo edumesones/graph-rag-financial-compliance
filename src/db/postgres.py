@@ -92,7 +92,7 @@ class PostgresManager:
         latency_ms: float,
         metadata: Optional[Dict[str, Any]] = None,
         session_id: str = "default",
-    ) -> None:
+    ) -> Optional[int]:
         """
         Log LLM prompt and response to database
 
@@ -105,19 +105,23 @@ class PostgresManager:
             latency_ms: Response time in milliseconds
             metadata: Additional context (dict)
             session_id: Session identifier
+
+        Returns:
+            The id of the inserted row, or None if the write did not happen.
         """
         if not self.pool:
             print("PostgreSQL not connected, skipping log_prompt")
-            return
+            return None
 
         query = """
             INSERT INTO prompt_logs (layer, prompt, response, latency_ms, metadata, session_id)
             VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id
         """
 
         try:
             async with self.pool.acquire() as conn:
-                await conn.execute(
+                return await conn.fetchval(
                     query,
                     layer,
                     prompt,
@@ -128,6 +132,7 @@ class PostgresManager:
                 )
         except Exception as e:
             print(f"Failed to log prompt: {e}")
+            return None
 
     async def log_error(
         self,
@@ -138,7 +143,7 @@ class PostgresManager:
         severity: str = "error",
         session_id: Optional[str] = None,
         traceback_str: Optional[str] = None,
-    ) -> None:
+    ) -> Optional[int]:
         """
         Log application error to database
 
@@ -150,20 +155,24 @@ class PostgresManager:
             severity: One of: critical, error, warning, info
             session_id: Session identifier
             traceback_str: Full traceback string
+
+        Returns:
+            The id of the inserted row, or None if the write did not happen.
         """
         if not self.pool:
             print(f"PostgreSQL not connected, skipping log_error: {error_message}")
-            return
+            return None
 
         query = """
             INSERT INTO error_logs
             (layer, error_type, error_message, traceback, context, severity, session_id)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id
         """
 
         try:
             async with self.pool.acquire() as conn:
-                await conn.execute(
+                return await conn.fetchval(
                     query,
                     layer,
                     error_type,
@@ -175,6 +184,7 @@ class PostgresManager:
                 )
         except Exception as e:
             print(f"Failed to log error: {e}")
+            return None
 
     async def log_query_metrics(
         self,
@@ -186,7 +196,7 @@ class PostgresManager:
         documents_retrieved: int,
         routing_decision: str,
         metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    ) -> Optional[int]:
         """
         Log RAG query metrics
 
@@ -199,21 +209,25 @@ class PostgresManager:
             documents_retrieved: Number of documents retrieved
             routing_decision: Routing strategy used
             metadata: Additional metadata
+
+        Returns:
+            The id of the inserted row, or None if the write did not happen.
         """
         if not self.pool:
             print("PostgreSQL not connected, skipping log_query_metrics")
-            return
+            return None
 
         query_sql = """
             INSERT INTO query_metrics
             (query, company, total_time_ms, confidence, citations_count,
              documents_retrieved, routing_decision, metadata)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING id
         """
 
         try:
             async with self.pool.acquire() as conn:
-                await conn.execute(
+                return await conn.fetchval(
                     query_sql,
                     query,
                     company,
@@ -226,6 +240,7 @@ class PostgresManager:
                 )
         except Exception as e:
             print(f"Failed to log query metrics: {e}")
+            return None
 
     async def get_prompt_logs(
         self,

@@ -24,7 +24,7 @@ async def test_postgres_manager(postgres_manager):
 
     # Test logging (basic)
     log_id = await postgres_manager.log_prompt(
-        layer="test_layer",
+        layer="other",
         prompt="test prompt",
         response="test response",
         latency_ms=100.0,

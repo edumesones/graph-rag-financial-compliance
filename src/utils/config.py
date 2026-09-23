@@ -124,6 +124,18 @@ class AppConfig(BaseSettings):
 config = AppConfig()
 
 
+def get_config() -> AppConfig:
+    """
+    Return the application configuration.
+
+    Settings are read once at import time, so every caller sees the same
+    instance. Prefer this over importing the module-level `config` binding:
+    it is what the tests and scripts use, and it keeps the singleton behind
+    an accessor should loading ever need to become lazy or per-environment.
+    """
+    return config
+
+
 def validate_config() -> bool:
     """
     Validate that all required configuration is present

@@ -2,16 +2,10 @@
 Pytest configuration and fixtures
 """
 import pytest
-import asyncio
-from typing import AsyncGenerator
 
-# Make all tests async-compatible
-@pytest.fixture(scope="session")
-def event_loop():
-    """Create event loop for async tests"""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+# Note: no custom event_loop fixture. Overriding it is deprecated in
+# pytest-asyncio 0.23+ and removed in 1.x; asyncio_mode=auto in pytest.ini
+# supplies the loop and awaits the async fixtures below.
 
 
 @pytest.fixture
@@ -45,7 +39,8 @@ async def redis_cache():
         host=config.redis.host,
         port=config.redis.port,
         db=config.redis.db,
-        ttl=config.redis.ttl,
+        password=config.redis.password,
+        default_ttl=config.redis.ttl,
     )
 
     await cache.connect()
