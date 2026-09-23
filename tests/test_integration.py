@@ -2,7 +2,7 @@
 Integration tests for RAG system - FastAPI Endpoints
 """
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 import time
 
 
@@ -15,7 +15,7 @@ async def test_health_check():
     """Test health check endpoint returns healthy status"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/health_check")
 
     assert response.status_code == 200
@@ -35,7 +35,7 @@ async def test_analyze_compliance_endpoint_structure(sample_company, sample_quer
     """Test analyze compliance endpoint returns proper structure"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test", timeout=30.0) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test", timeout=30.0) as client:
         response = await client.post(
             "/analyze_compliance",
             json={"company": sample_company, "query": sample_query, "verbose": True},
@@ -68,7 +68,7 @@ async def test_analyze_compliance_verbose_mode(sample_company, sample_query):
     """Test verbose mode returns pipeline trace"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test", timeout=30.0) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test", timeout=30.0) as client:
         response = await client.post(
             "/analyze_compliance",
             json={"company": sample_company, "query": sample_query, "verbose": True},
@@ -88,7 +88,7 @@ async def test_analyze_compliance_non_verbose_mode(sample_company, sample_query)
     """Test non-verbose mode returns minimal data"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test", timeout=30.0) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test", timeout=30.0) as client:
         response = await client.post(
             "/analyze_compliance",
             json={"company": sample_company, "query": sample_query, "verbose": False},
@@ -108,7 +108,7 @@ async def test_get_system_stats():
     """Test system stats endpoint"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/get_system_stats")
 
     assert response.status_code == 200
@@ -123,7 +123,7 @@ async def test_get_prompt_logs():
     """Test prompt logs retrieval endpoint"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/get_prompt_logs?limit=10")
 
     # Should return 200 even if no logs exist
@@ -137,7 +137,7 @@ async def test_prometheus_metrics():
     """Test Prometheus metrics endpoint"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/metrics")
 
     assert response.status_code == 200
@@ -154,7 +154,7 @@ async def test_invalid_endpoint():
     """Test that invalid endpoints return 404"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/invalid_endpoint_12345")
 
     assert response.status_code == 404
@@ -165,7 +165,7 @@ async def test_analyze_compliance_missing_company():
     """Test analyze compliance with missing company field"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/analyze_compliance",
             json={"query": "What is the revenue?"},  # Missing company
@@ -179,7 +179,7 @@ async def test_analyze_compliance_missing_query():
     """Test analyze compliance with missing query field"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.post(
             "/analyze_compliance",
             json={"company": "Tesla Inc"},  # Missing query
@@ -193,7 +193,7 @@ async def test_response_time_performance(sample_company, sample_query):
     """Test that endpoint responds within acceptable time"""
     from src.main import app
 
-    async with AsyncClient(app=app, base_url="http://test", timeout=30.0) as client:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test", timeout=30.0) as client:
         start_time = time.time()
         response = await client.post(
             "/analyze_compliance",

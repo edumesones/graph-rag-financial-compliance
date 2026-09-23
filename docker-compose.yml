@@ -52,7 +52,7 @@ services:
 
   # Neo4j Community Edition
   neo4j:
-    image: neo4j:5.24.0-community
+    image: neo4j:5.24-community
     container_name: fintech-rag-neo4j
     ports:
       - "7474:7474"  # Browser
