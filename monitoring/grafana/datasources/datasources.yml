@@ -1,0 +1,64 @@
+# ================================
+# Grafana Datasources Configuration
+# ================================
+# Auto-provisioned datasources for Fintech Agentic RAG
+# ================================
+
+apiVersion: 1
+
+datasources:
+  # ================================
+  # Prometheus (Default)
+  # ================================
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      timeInterval: 15s
+    version: 1
+
+  # ================================
+  # PostgreSQL
+  # ================================
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgresql:5432
+    database: fintech_rag
+    user: fintech_user
+    secureJsonData:
+      password: ${POSTGRES_PASSWORD}
+    jsonData:
+      sslmode: disable
+      postgresVersion: 1600  # PostgreSQL 16
+      timescaledb: false
+      maxOpenConns: 10
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+    editable: true
+    version: 1
+
+  # ================================
+  # Redis (optional - requires redis-datasource plugin)
+  # ================================
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis://redis:6379
+    editable: true
+    jsonData:
+      client: standalone
+      poolSize: 5
+      timeout: 10
+      pingInterval: 0
+      pipelineWindow: 0
+    version: 1
+
+deleteDatasources:
+  # Remove default TestData datasource
+  - name: TestData
+    orgId: 1

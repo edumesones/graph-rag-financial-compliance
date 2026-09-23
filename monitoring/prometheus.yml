@@ -1,0 +1,118 @@
+# ================================
+# Prometheus Configuration
+# ================================
+# Monitors the Fintech Agentic RAG system
+# Scrapes metrics from FastAPI, Neo4j, Redis, PostgreSQL
+# ================================
+
+global:
+  scrape_interval: 15s        # Scrape targets every 15 seconds
+  evaluation_interval: 15s     # Evaluate rules every 15 seconds
+  scrape_timeout: 10s          # Timeout after 10 seconds
+
+  external_labels:
+    cluster: 'fintech-rag'
+    environment: 'production'
+    service: 'agentic-rag'
+
+# Alertmanager configuration (optional - add if needed)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+# rule_files:
+#   - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # ================================
+  # FastAPI Application Metrics
+  # ================================
+  - job_name: 'fastapi-app'
+    static_configs:
+      - targets: ['app:8000']
+        labels:
+          service: 'fastapi'
+          component: 'application'
+
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+    # Relabeling
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+):.*'
+        replacement: '${1}'
+
+  # ================================
+  # Prometheus Self-Monitoring
+  # ================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          component: 'monitoring'
+
+  # ================================
+  # Neo4j Metrics
+  # ================================
+  - job_name: 'neo4j'
+    static_configs:
+      - targets: ['neo4j:7474']
+        labels:
+          service: 'neo4j'
+          component: 'database'
+
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # ================================
+  # Redis Metrics (via redis_exporter if needed)
+  # ================================
+  # Note: Redis doesn't export Prometheus metrics natively
+  # You can add redis_exporter as a sidecar if needed:
+  #
+  # - job_name: 'redis'
+  #   static_configs:
+  #     - targets: ['redis-exporter:9121']
+  #       labels:
+  #         service: 'redis'
+  #         component: 'cache'
+
+  # ================================
+  # PostgreSQL Metrics (via postgres_exporter if needed)
+  # ================================
+  # Note: PostgreSQL doesn't export Prometheus metrics natively
+  # You can add postgres_exporter as a sidecar if needed:
+  #
+  # - job_name: 'postgresql'
+  #   static_configs:
+  #     - targets: ['postgres-exporter:9187']
+  #       labels:
+  #         service: 'postgresql'
+  #         component: 'database'
+
+# ================================
+# Storage Configuration
+# ================================
+storage:
+  tsdb:
+    path: /prometheus
+    retention:
+      time: 30d         # Keep data for 30 days
+      size: 10GB        # Maximum 10GB of storage
+
+# ================================
+# Remote Write (optional - for long-term storage)
+# ================================
+# remote_write:
+#   - url: "https://your-remote-storage/api/v1/write"
+#     queue_config:
+#       capacity: 10000
+#       max_shards: 200
+#       min_shards: 1

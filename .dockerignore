@@ -1,0 +1,111 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/
+README.md
+LICENSE
+
+# Test files
+tests/
+test_*.py
+*_test.py
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Local development
+.env
+.env.local
+*.env
+.env.*
+!.env.example
+
+# Logs (will be generated in container)
+logs/
+*.log
+
+# Modal files (legacy)
+*.modal.py
+modal_*.py
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+.cache/
+
+# Data files (too large)
+data/
+*.csv
+*.parquet
+*.feather
+
+# Model caches (will be downloaded in container)
+vectors/.cache/
+.huggingface/
+
+# Backups
+backups/
+*.backup
+*.bak
+*.sql
+*.dump
+
+# OS files
+Thumbs.db
+.DS_Store

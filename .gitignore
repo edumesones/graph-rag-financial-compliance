@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Modal
+.modal/
+
+# Data (keep the directory, ignore contents)
+data/*
+!data/.gitkeep
+data/*.txt
+data/*.pdf
+data/*.csv
+*.db
+*.sqlite
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ChromaDB
+chroma_db/
+*.parquet
+
+# Vector stores (keep the directory, ignore contents)
+vectors/*
+!vectors/.gitkeep
+
+# Backups
+*.bak
+*.backup
+*.tar.gz
+
+# Temporary files
+*.tmp
+query_result.json
+debug_output.txt
+NUL
