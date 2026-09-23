@@ -12,9 +12,12 @@ import sys
 import argparse
 import json
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# This file lives at <repo>/scripts/runners/, so the repo root is three levels up.
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
-from src.feedback import HITLPipeline, FeedbackType
+from src.advanced.feedback import HITLPipeline, FeedbackType
 
 
 def main():

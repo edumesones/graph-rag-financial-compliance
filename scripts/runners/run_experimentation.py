@@ -11,9 +11,12 @@ import sys
 import argparse
 import json
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# This file lives at <repo>/scripts/runners/, so the repo root is three levels up.
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
-from src.experimentation import ABTestingManager, ShadowDeploymentManager
+from src.advanced.experimentation import ABTestingManager, ShadowDeploymentManager
 
 
 def main():
