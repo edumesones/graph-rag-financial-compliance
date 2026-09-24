@@ -12,6 +12,27 @@ Compose.
 
 ---
 
+
+## Architecture
+
+```mermaid
+flowchart LR
+    EDGAR["SEC EDGAR<br/>10-K filings"] --> ING["ingest<br/>chunk + extract entities"]
+    ING --> VEC[("vector store<br/>similarity")]
+    ING --> NEO[("Neo4j<br/>entities + relations")]
+    Q["compliance question"] --> ORCH["orchestrator"]
+    ORCH --> VEC
+    ORCH --> NEO
+    NEO -->|multi-hop join| ANS["grounded answer"]
+    VEC --> ANS
+    ORCH -.interface only.-> RR["re-ranker"]
+    style RR stroke-dasharray: 5 5
+    PG[("Postgres<br/>prompt + error log")] -.- ORCH
+    RD[("Redis<br/>cache")] -.- ORCH
+```
+
+The graph earns its place when the answer is a *join* across the filing, where similarity to the question never retrieves it.
+
 ## Why a graph alongside the vector index
 
 Vector search retrieves passages that are *semantically near* a question. That is
